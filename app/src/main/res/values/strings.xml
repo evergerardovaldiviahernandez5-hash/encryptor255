@@ -3,15 +3,15 @@
     <string name="app_name">Encryptor 255</string>
     <string name="brand_top">ENCRYPTOR</string>
     <string name="brand_big">255</string>
-    <string name="tagline">AES-256-GCM · PBKDF2-SHA512 · GZIP</string>
-    <string name="badge_offline">● 100%% OFFLINE</string>
+    <string name="tagline">AES-256-GCM · PBKDF2-SHA512 310K · GZIP\nNada sale de este dispositivo.</string>
+    <string name="badge_offline">● OFFLINE</string>
 
     <string name="tab_text">Texto</string>
     <string name="tab_file">Archivo</string>
 
     <string name="label_password">CLAVE MAESTRA</string>
     <string name="label_content">CONTENIDO</string>
-    <string name="label_terminal">TERMINAL · LOG</string>
+    <string name="label_terminal">TERMINAL</string>
     <string name="label_strength">FUERZA</string>
 
     <string name="hint_password">Introduce tu contraseña…</string>
@@ -25,7 +25,6 @@
     <string name="action_share">COMPARTIR</string>
     <string name="action_clear">LIMPIAR</string>
     <string name="action_generate">GENERAR</string>
-    <string name="action_paste">PEGAR</string>
 
     <string name="cd_show_pwd">Mostrar contraseña</string>
     <string name="cd_hide_pwd">Ocultar contraseña</string>
@@ -34,11 +33,11 @@
     <string name="cd_share">Compartir</string>
     <string name="cd_clear">Limpiar todo</string>
 
-    <string name="status_ready">> sistema listo\n> esperando instrucción_</string>
-    <string name="status_working">&gt; cifrando bloques…</string>
+    <string name="status_ready">▸ sistema listo\n▸ esperando instrucción_</string>
+    <string name="status_working">▸ procesando…</string>
 
-    <string name="footer_version">v2.0 · cipher noir</string>
-    <string name="footer_note">ningún byte sale de este dispositivo</string>
+    <string name="footer_version">v2.5 · claude warm</string>
+    <string name="footer_note">0 permisos · 0 trackers · 0 nube</string>
 
     <string name="strength_empty">—</string>
     <string name="strength_weak">DÉBIL</string>

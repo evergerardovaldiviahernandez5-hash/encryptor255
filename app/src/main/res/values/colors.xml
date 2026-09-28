@@ -1,52 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="obsidian_950">#02040A</color>
-    <color name="obsidian_900">#04070C</color>
-    <color name="obsidian_800">#080D16</color>
-    <color name="obsidian_700">#0D1523</color>
-    <color name="obsidian_600">#131E30</color>
-    <color name="obsidian_500">#1A2842</color>
-    <color name="obsidian_400">#243552</color>
+    <!-- ════════ CLAUDE WARM PALETTE ════════ -->
+    <!-- Base — café oscuro cálido (no negro azulado) -->
+    <color name="warm_950">#14120E</color>
+    <color name="warm_900">#1A1915</color>
+    <color name="warm_800">#232019</color>
+    <color name="warm_700">#2A2620</color>
+    <color name="warm_600">#332F28</color>
+    <color name="warm_500">#3A362C</color>
+    <color name="warm_400">#4A4539</color>
 
-    <color name="cyan_400">#4DF0FF</color>
-    <color name="cyan_500">#00E5FF</color>
-    <color name="cyan_600">#00B8D4</color>
-    <color name="cyan_700">#0091AA</color>
-    <color name="cyan_alpha_10">#1A00E5FF</color>
-    <color name="cyan_alpha_20">#3300E5FF</color>
-    <color name="cyan_alpha_40">#6600E5FF</color>
+    <!-- Acento terracota (Claude) -->
+    <color name="terracotta">#D97757</color>
+    <color name="terracotta_light">#E08A6E</color>
+    <color name="terracotta_dark">#B85F42</color>
+    <color name="terracotta_alpha_10">#1AD97757</color>
+    <color name="terracotta_alpha_20">#33D97757</color>
+    <color name="terracotta_alpha_40">#66D97757</color>
 
-    <color name="violet_400">#B388FF</color>
-    <color name="violet_500">#7C4DFF</color>
-    <color name="violet_600">#651FFF</color>
+    <!-- Texto warm -->
+    <color name="text_primary">#E8E3D9</color>
+    <color name="text_secondary">#B8B0A0</color>
+    <color name="text_tertiary">#7A7268</color>
+    <color name="text_disabled">#4A4539</color>
 
-    <!-- Hacker green -->
-    <color name="matrix_400">#4AFF9E</color>
-    <color name="matrix_500">#00FF87</color>
-    <color name="matrix_600">#00CC6A</color>
-    <color name="matrix_alpha_20">#3300FF87</color>
+    <!-- Semánticos warm -->
+    <color name="success">#7FB069</color>
+    <color name="error">#E06C75</color>
+    <color name="warning">#D4A76A</color>
+    <color name="danger_soft">#E88B92</color>
 
-    <color name="text_primary">#E8F4FF</color>
-    <color name="text_secondary">#8BA3BE</color>
-    <color name="text_tertiary">#4D6480</color>
-    <color name="text_disabled">#2A3A52</color>
+    <!-- Fuerza -->
+    <color name="strength_weak">#E06C75</color>
+    <color name="strength_fair">#D4A76A</color>
+    <color name="strength_good">#7FB069</color>
+    <color name="strength_strong">#D97757</color>
 
-    <color name="success">#00E676</color>
-    <color name="error">#FF5252</color>
-    <color name="warning">#FFC400</color>
-    <color name="danger_soft">#FF8A80</color>
-
-    <color name="strength_weak">#FF5252</color>
-    <color name="strength_fair">#FFC400</color>
-    <color name="strength_good">#00E676</color>
-    <color name="strength_strong">#00E5FF</color>
-
-    <color name="divider">#142033</color>
-    <color name="divider_strong">#1F2E47</color>
+    <!-- Estructura -->
+    <color name="divider">#2A2620</color>
+    <color name="divider_strong">#3A362C</color>
     <color name="transparent">#00000000</color>
+    <color name="icon_background">#1A1915</color>
 
-    <color name="terminal_bg">#02060B</color>
-    <color name="terminal_text">#00FF87</color>
-    <color name="terminal_dim">#0A6636</color>
-    <color name="icon_background">#0B1220</color>
+    <!-- Terminal warm -->
+    <color name="terminal_bg">#14120E</color>
+    <color name="terminal_text">#E8E3D9</color>
+    <color name="terminal_dim">#7A7268</color>
+
+    <!-- ════════ ALIAS LEGACY (no romper drawables) ════════ -->
+    <color name="obsidian_950">#14120E</color>
+    <color name="obsidian_900">#1A1915</color>
+    <color name="obsidian_800">#232019</color>
+    <color name="obsidian_700">#2A2620</color>
+    <color name="obsidian_600">#332F28</color>
+    <color name="obsidian_500">#3A362C</color>
+    <color name="obsidian_400">#4A4539</color>
+
+    <color name="cyan_400">#E08A6E</color>
+    <color name="cyan_500">#D97757</color>
+    <color name="cyan_600">#B85F42</color>
+    <color name="cyan_700">#8F4A33</color>
+    <color name="cyan_alpha_10">#1AD97757</color>
+    <color name="cyan_alpha_20">#33D97757</color>
+    <color name="cyan_alpha_40">#66D97757</color>
+
+    <color name="violet_400">#D4A76A</color>
+    <color name="violet_500">#B8905C</color>
+    <color name="violet_600">#8F6E42</color>
+
+    <color name="matrix_400">#7FB069</color>
+    <color name="matrix_500">#7FB069</color>
+    <color name="matrix_600">#5A8550</color>
+    <color name="matrix_alpha_20">#337FB069</color>
 </resources>

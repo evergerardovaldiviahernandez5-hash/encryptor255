@@ -7,9 +7,9 @@
                 android:centerX="0.5"
                 android:centerY="0.42"
                 android:gradientRadius="760"
-                android:startColor="#12203A"
-                android:centerColor="#080D16"
-                android:endColor="#02040A" />
+                android:startColor="#232019"
+                android:centerColor="#1A1915"
+                android:endColor="#14120E" />
         </shape>
     </item>
 </layer-list>
