@@ -1,9 +1,8 @@
 package com.encryptor255
 
+import java.security.MessageDigest
 import java.security.SecureRandom
 import kotlin.math.log2
-import kotlin.math.min
-import kotlin.math.pow
 
 object PasswordUtils {
 
@@ -26,14 +25,14 @@ object PasswordUtils {
     }
 
     data class Strength(
-        val score: Int,       // 0..4
+        val score: Int,
         val entropyBits: Double,
-        val label: String,    // "DÉBIL", "ACEPTABLE", ...
+        val label: String
     )
 
     /**
-     * Fuerza basada en entropía de Shannon aproximada.
-     * bits = log2(alphabetSize) * length  → ajustado por variedad real.
+     * Fuerza basada en entropía aproximada (log2 del alfabeto * longitud),
+     * penalizada por baja diversidad de caracteres.
      */
     fun strength(password: String): Strength {
         if (password.isEmpty()) return Strength(0, 0.0, "—")
@@ -44,12 +43,14 @@ object PasswordUtils {
         var hasSymbol = false
         var hasOther = false
 
-        for (c in password) when {
-            c in 'a'..'z' -> hasLower = true
-            c in 'A'..'Z' -> hasUpper = true
-            c in '0'..'9' -> hasDigit = true
-            c in "!@#\$%^&*()-_=+[]{}<>?/|~.,;:'\"\\` " -> hasSymbol = true
-            else -> hasOther = true
+        for (c in password) {
+            when {
+                c in 'a'..'z' -> hasLower = true
+                c in 'A'..'Z' -> hasUpper = true
+                c in '0'..'9' -> hasDigit = true
+                c in "!@#\$%^&*()-_=+[]{}<>?/|~.,;:'\"\\` " -> hasSymbol = true
+                else -> hasOther = true
+            }
         }
 
         var alphabet = 0
@@ -60,21 +61,20 @@ object PasswordUtils {
         if (hasOther) alphabet += 100
         if (alphabet == 0) alphabet = 1
 
-        val rawBits = log2(alphabet.toDouble()) * password.length
+        val rawBits: Double = log2(alphabet.toDouble()) * password.length.toDouble()
 
-        // Penalización por repeticiones
-        val unique = password.toSet().size.toDouble()
-        val diversity = (unique / password.length).coerceIn(0.3, 1.0)
-        val bits = rawBits * (0.6 + 0.4 * diversity)
+        val uniqueCount: Int = password.toSet().size
+        val diversity: Double = (uniqueCount.toDouble() / password.length.toDouble()).coerceIn(0.3, 1.0)
+        val bits: Double = rawBits * (0.6 + 0.4 * diversity)
 
-        val score = when {
+        val score: Int = when {
             bits >= 128 -> 4
             bits >= 80 -> 3
             bits >= 50 -> 2
             bits >= 30 -> 1
             else -> 0
         }
-        val label = when (score) {
+        val label: String = when (score) {
             4 -> "BLINDADA"
             3 -> "FUERTE"
             2 -> "ACEPTABLE"
@@ -84,15 +84,15 @@ object PasswordUtils {
         return Strength(score, bits, label)
     }
 
-    /** Hash rápido (para mostrar "huella" en el log) */
+    /** Huella corta (SHA-256 primeros 4 bytes) para mostrar en el log */
     fun shortHash(input: String): String {
-        val md = java.security.MessageDigest.getInstance("SHA-256")
+        val md = MessageDigest.getInstance("SHA-256")
         val bytes = md.digest(input.toByteArray(Charsets.UTF_8))
-        return bytes.take(4).joinToString("") { "%02x".format(it) }
+        val sb = StringBuilder()
+        for (i in 0 until 4) {
+            val b = bytes[i].toInt() and 0xFF
+            sb.append(String.format("%02x", b))
+        }
+        return sb.toString()
     }
-
-    private fun Int.powSafe(exp: Int): Double = this.toDouble().pow(exp.toDouble())
-
-    @Suppress("unused")
-    private fun min(a: Int, b: Int) = min(a, b)
 }

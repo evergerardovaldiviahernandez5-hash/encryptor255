@@ -7,11 +7,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.text.Editable
-import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
 import android.util.Base64
 import android.view.HapticFeedbackConstants
@@ -25,7 +22,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private enum class Mode { TEXT, FILE }
     private enum class Action { ENCRYPT, DECRYPT }
 
-    // Views
     private lateinit var tabText: TextView
     private lateinit var tabFile: TextView
     private lateinit var containerText: View
@@ -77,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         window.navigationBarColor = android.graphics.Color.TRANSPARENT
         setContentView(R.layout.activity_main)
 
-        // Bind
         tabText = findViewById(R.id.tabText)
         tabFile = findViewById(R.id.tabFile)
         containerText = findViewById(R.id.containerText)
@@ -93,11 +87,14 @@ class MainActivity : AppCompatActivity() {
         btnTogglePwd = findViewById(R.id.btnTogglePwd)
         badge = findViewById(R.id.badgeOffline)
 
-        // Listeners
         tabText.setOnClickListener { withHaptic { switchMode(Mode.TEXT) } }
         tabFile.setOnClickListener { withHaptic { switchMode(Mode.FILE) } }
-        findViewById<Button>(R.id.btnEncrypt).setOnClickListener { withHaptic { action = Action.ENCRYPT; dispatch() } }
-        findViewById<Button>(R.id.btnDecrypt).setOnClickListener { withHaptic { action = Action.DECRYPT; dispatch() } }
+        findViewById<Button>(R.id.btnEncrypt).setOnClickListener {
+            withHaptic { action = Action.ENCRYPT; dispatch() }
+        }
+        findViewById<Button>(R.id.btnDecrypt).setOnClickListener {
+            withHaptic { action = Action.DECRYPT; dispatch() }
+        }
         findViewById<Button>(R.id.btnPickFile).setOnClickListener { withHaptic { pickFile() } }
         findViewById<ImageButton>(R.id.btnCopy).setOnClickListener { withHaptic { copyToClipboard() } }
         findViewById<ImageButton>(R.id.btnShare).setOnClickListener { withHaptic { shareCurrent() } }
@@ -105,10 +102,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnGenerate).setOnClickListener { withHaptic { generatePassword() } }
         btnTogglePwd.setOnClickListener { withHaptic { togglePasswordVisibility() } }
 
-        // Medidor de fuerza en vivo
-        passwordInput.doAfterTextChanged { refreshStrength(it?.toString() ?: "") }
+        passwordInput.doAfterTextChanged { editable ->
+            refreshStrength(editable?.toString() ?: "")
+        }
 
-        // Pulso badge offline
         ObjectAnimator.ofFloat(badge, "alpha", 1f, 0.55f, 1f).apply {
             duration = 2600
             repeatCount = ValueAnimator.INFINITE
@@ -116,12 +113,9 @@ class MainActivity : AppCompatActivity() {
             start()
         }
 
-        // Animación de entrada de cards
-        listOf(containerText, containerFile).forEachIndexed { i, v ->
-            v.alpha = 0f
-            v.translationY = 24f
-            v.animate().alpha(1f).translationY(0f).setStartDelay((i * 90).toLong()).setDuration(420).start()
-        }
+        containerText.alpha = 0f
+        containerText.translationY = 24f
+        containerText.animate().alpha(1f).translationY(0f).setDuration(420).start()
 
         log("> sistema iniciado")
         log("> aes-256-gcm · pbkdf2-sha512 310k · gzip")
@@ -147,8 +141,10 @@ class MainActivity : AppCompatActivity() {
         val active = ContextCompat.getDrawable(this, R.drawable.bg_segment_selected)
         tabText.background = if (m == Mode.TEXT) active else null
         tabFile.background = if (m == Mode.FILE) active else null
-        tabText.setTextColor(ContextCompat.getColor(this, if (m == Mode.TEXT) R.color.text_primary else R.color.text_secondary))
-        tabFile.setTextColor(ContextCompat.getColor(this, if (m == Mode.FILE) R.color.text_primary else R.color.text_secondary))
+        tabText.setTextColor(ContextCompat.getColor(this,
+            if (m == Mode.TEXT) R.color.text_primary else R.color.text_secondary))
+        tabFile.setTextColor(ContextCompat.getColor(this,
+            if (m == Mode.FILE) R.color.text_primary else R.color.text_secondary))
     }
 
     private fun togglePasswordVisibility() {
@@ -163,13 +159,13 @@ class MainActivity : AppCompatActivity() {
             btnTogglePwd.setImageResource(R.drawable.ic_eye_on)
             btnTogglePwd.contentDescription = getString(R.string.cd_show_pwd)
         }
-        passwordInput.setSelection(sel)
+        passwordInput.setSelection(sel.coerceAtLeast(0))
     }
 
     private fun refreshStrength(pwd: String) {
         val s = PasswordUtils.strength(pwd)
-        val maxW = (strengthBar.parent as View).width
-        val target = if (maxW > 0) maxW else resources.displayMetrics.widthPixels - 120
+        val parentW = (strengthBar.parent as? View)?.width ?: 0
+        val target = if (parentW > 0) parentW else resources.displayMetrics.widthPixels - 120
 
         val colorRes = when (s.score) {
             4 -> R.color.strength_strong
@@ -200,7 +196,7 @@ class MainActivity : AppCompatActivity() {
         passwordInput.setSelection(pwd.length)
         if (!pwdVisible) togglePasswordVisibility()
         refreshStrength(pwd)
-        log("> clave generada: 24 chars · ${PasswordUtils.strength(pwd).entropyBits.toInt()} bits")
+        log("> clave generada · 24 chars · ${PasswordUtils.strength(pwd).entropyBits.toInt()} bits")
         toast("Contraseña generada")
     }
 
@@ -218,16 +214,22 @@ class MainActivity : AppCompatActivity() {
         val text = textInput.text.toString()
         if (text.isEmpty()) { log("! sin contenido"); toast("Escribe un texto"); return }
         log("> cifrando texto (${text.length} chars)…")
-        runJob { 
-            val out = ByteArrayOutputStream()
-            CryptoEngine.encrypt(ByteArrayInputStream(text.toByteArray(Charsets.UTF_8)), out, pwd.copyOf(), true)
-            "E255T:" + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
-        } onOk { result ->
-            textInput.setText(result)
-            val hash = PasswordUtils.shortHash(result)
-            hashLabel.text = "sha:$hash"
-            log("> cifrado ok · ${result.length} chars · sha256:$hash")
-        }
+        runJob(
+            block = {
+                val out = ByteArrayOutputStream()
+                CryptoEngine.encrypt(
+                    ByteArrayInputStream(text.toByteArray(Charsets.UTF_8)),
+                    out, pwd.copyOf(), true
+                )
+                "E255T:" + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+            },
+            onOk = { result ->
+                textInput.setText(result)
+                val hash = PasswordUtils.shortHash(result)
+                hashLabel.text = "sha:$hash"
+                log("> cifrado ok · ${result.length} chars · sha256:$hash")
+            }
+        )
     }
 
     private fun decryptText() {
@@ -236,16 +238,19 @@ class MainActivity : AppCompatActivity() {
         if (text.startsWith("E255T:")) text = text.substring(6)
         if (text.isEmpty()) { log("! sin ciphertext"); toast("Pega el texto cifrado"); return }
         log("> descifrando texto…")
-        runJob {
-            val bytes = Base64.decode(text, Base64.DEFAULT)
-            val out = ByteArrayOutputStream()
-            CryptoEngine.decrypt(ByteArrayInputStream(bytes), out, pwd.copyOf())
-            String(out.toByteArray(), Charsets.UTF_8)
-        } onOk { result ->
-            textInput.setText(result)
-            hashLabel.text = ""
-            log("> descifrado ok · ${result.length} chars")
-        }
+        runJob(
+            block = {
+                val bytes = Base64.decode(text, Base64.DEFAULT)
+                val out = ByteArrayOutputStream()
+                CryptoEngine.decrypt(ByteArrayInputStream(bytes), out, pwd.copyOf())
+                String(out.toByteArray(), Charsets.UTF_8)
+            },
+            onOk = { result ->
+                textInput.setText(result)
+                hashLabel.text = ""
+                log("> descifrado ok · ${result.length} chars")
+            }
+        )
     }
 
     private fun pickFile() {
@@ -264,24 +269,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun pickAndEncrypt() {
         val pwd = readPassword() ?: return
-        val uri = pickedUri ?: run { toast("Selecciona un archivo"); return }
+        val uri = pickedUri
+        if (uri == null) { toast("Selecciona un archivo"); return }
         val name = (queryName(uri) ?: "archivo") + ".e255"
         pendingCreate = { dst ->
-            runJob { encryptFile(uri, dst, pwd); "ok" } onOk {
-                log("> archivo cifrado → $name")
-            }
+            runJob(
+                block = { encryptFile(uri, dst, pwd); "ok" },
+                onOk = { log("> archivo cifrado → $name") }
+            )
         }
         createDoc.launch(name)
     }
 
     private fun pickAndDecrypt() {
         val pwd = readPassword() ?: return
-        val uri = pickedUri ?: run { toast("Selecciona un .e255"); return }
+        val uri = pickedUri
+        if (uri == null) { toast("Selecciona un .e255"); return }
         val original = (queryName(uri) ?: "archivo.e255").removeSuffix(".e255")
         pendingCreate = { dst ->
-            runJob { decryptFile(uri, dst, pwd); "ok" } onOk {
-                log("> archivo descifrado → $original")
-            }
+            runJob(
+                block = { decryptFile(uri, dst, pwd); "ok" },
+                onOk = { log("> archivo descifrado → $original") }
+            )
         }
         createDoc.launch(original)
     }
@@ -344,7 +353,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun runJob(block: suspend () -> String, onOk: (String) -> Unit) {
         lifecycleScope.launch {
-            setStatusWorking()
+            log("> trabajando…")
             try {
                 val msg = withContext(Dispatchers.IO) { block() }
                 onOk(msg)
@@ -354,10 +363,6 @@ class MainActivity : AppCompatActivity() {
                 toast(m)
             }
         }
-    }
-
-    private fun setStatusWorking() {
-        log("> trabajando…")
     }
 
     private fun log(line: String) {
