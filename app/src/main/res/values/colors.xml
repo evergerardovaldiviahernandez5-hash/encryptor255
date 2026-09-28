@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Obsidian scale -->
-    <color name="obsidian_950">#020408</color>
+    <color name="obsidian_950">#02040A</color>
     <color name="obsidian_900">#04070C</color>
     <color name="obsidian_800">#080D16</color>
     <color name="obsidian_700">#0D1523</color>
@@ -9,7 +8,6 @@
     <color name="obsidian_500">#1A2842</color>
     <color name="obsidian_400">#243552</color>
 
-    <!-- Cyan laser -->
     <color name="cyan_400">#4DF0FF</color>
     <color name="cyan_500">#00E5FF</color>
     <color name="cyan_600">#00B8D4</color>
@@ -18,25 +16,36 @@
     <color name="cyan_alpha_20">#3300E5FF</color>
     <color name="cyan_alpha_40">#6600E5FF</color>
 
-    <!-- Violet premium -->
     <color name="violet_400">#B388FF</color>
     <color name="violet_500">#7C4DFF</color>
     <color name="violet_600">#651FFF</color>
-    <color name="violet_alpha_20">#337C4DFF</color>
 
-    <!-- Texto -->
+    <!-- Hacker green -->
+    <color name="matrix_400">#4AFF9E</color>
+    <color name="matrix_500">#00FF87</color>
+    <color name="matrix_600">#00CC6A</color>
+    <color name="matrix_alpha_20">#3300FF87</color>
+
     <color name="text_primary">#E8F4FF</color>
     <color name="text_secondary">#8BA3BE</color>
     <color name="text_tertiary">#4D6480</color>
     <color name="text_disabled">#2A3A52</color>
 
-    <!-- Semánticos -->
     <color name="success">#00E676</color>
     <color name="error">#FF5252</color>
     <color name="warning">#FFC400</color>
+    <color name="danger_soft">#FF8A80</color>
 
-    <!-- Estructura -->
+    <color name="strength_weak">#FF5252</color>
+    <color name="strength_fair">#FFC400</color>
+    <color name="strength_good">#00E676</color>
+    <color name="strength_strong">#00E5FF</color>
+
     <color name="divider">#142033</color>
     <color name="divider_strong">#1F2E47</color>
     <color name="transparent">#00000000</color>
+
+    <color name="terminal_bg">#02060B</color>
+    <color name="terminal_text">#00FF87</color>
+    <color name="terminal_dim">#0A6636</color>
 </resources>

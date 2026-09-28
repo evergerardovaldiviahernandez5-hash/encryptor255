@@ -9,21 +9,40 @@
     <string name="tab_text">Texto</string>
     <string name="tab_file">Archivo</string>
 
-    <string name="label_password">Contraseña maestra</string>
-    <string name="label_content">Contenido</string>
+    <string name="label_password">CLAVE MAESTRA</string>
+    <string name="label_content">CONTENIDO</string>
+    <string name="label_terminal">TERMINAL · LOG</string>
+    <string name="label_strength">FUERZA</string>
 
-    <string name="action_encrypt">Cifrar</string>
-    <string name="action_decrypt">Descifrar</string>
-    <string name="action_pick_file">Seleccionar archivo</string>
-    <string name="action_pick_encrypted">Seleccionar .e255</string>
-    <string name="action_save">Guardar como…</string>
-
-    <string name="status_ready">Listo para cifrar</string>
-    <string name="status_working">Procesando…</string>
-    <string name="status_encrypted">Cifrado completado ✓</string>
-    <string name="status_decrypted">Descifrado completado ✓</string>
-
+    <string name="hint_password">Introduce tu contraseña…</string>
+    <string name="hint_content">Escribe o pega tu texto aquí…</string>
     <string name="hint_no_file">Ningún archivo seleccionado</string>
-    <string name="footer_version">v1.0 · Encryptor 255</string>
-    <string name="footer_note">Ningún dato sale de tu dispositivo</string>
+
+    <string name="action_encrypt">CIFRAR</string>
+    <string name="action_decrypt">DESCIFRAR</string>
+    <string name="action_pick_file">SELECCIONAR ARCHIVO</string>
+    <string name="action_copy">COPIAR</string>
+    <string name="action_share">COMPARTIR</string>
+    <string name="action_clear">LIMPIAR</string>
+    <string name="action_generate">GENERAR</string>
+    <string name="action_paste">PEGAR</string>
+
+    <string name="cd_show_pwd">Mostrar contraseña</string>
+    <string name="cd_hide_pwd">Ocultar contraseña</string>
+    <string name="cd_generate">Generar contraseña segura</string>
+    <string name="cd_copy">Copiar al portapapeles</string>
+    <string name="cd_share">Compartir</string>
+    <string name="cd_clear">Limpiar todo</string>
+
+    <string name="status_ready">> sistema listo\n> esperando instrucción_</string>
+    <string name="status_working">&gt; cifrando bloques…</string>
+
+    <string name="footer_version">v2.0 · cipher noir</string>
+    <string name="footer_note">ningún byte sale de este dispositivo</string>
+
+    <string name="strength_empty">—</string>
+    <string name="strength_weak">DÉBIL</string>
+    <string name="strength_fair">ACEPTABLE</string>
+    <string name="strength_good">FUERTE</string>
+    <string name="strength_strong">BLINDADA</string>
 </resources>

@@ -85,4 +85,8 @@
         <item name="android:minHeight">56dp</item>
         <item name="cornerRadius">18dp</item>
     </style>
+    <style name="Theme.Encryptor255.Splash" parent="Theme.Encryptor255">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
 </resources>
