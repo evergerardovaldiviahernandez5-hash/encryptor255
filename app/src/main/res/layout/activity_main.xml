@@ -1,43 +1,402 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="20dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="🔐 Encryptor 255" android:textSize="26sp" android:textStyle="bold" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="AES-256-GCM · PBKDF2-SHA512 · GZIP · 100% offline"
-            android:textSize="12sp" android:alpha="0.7" android:layout_marginBottom="20dp" />
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Contraseña">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/passwordInput" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" android:hint="Texto (entrada / salida)">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInput" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:minLines="3"
-                android:gravity="top" android:inputType="textMultiLine" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="horizontal" android:layout_marginTop="12dp">
-            <Button android:id="@+id/btnEncryptText" android:layout_width="0dp"
-                android:layout_weight="1" android:layout_height="wrap_content" android:text="Cifrar texto" />
-            <Button android:id="@+id/btnDecryptText" android:layout_width="0dp"
-                android:layout_weight="1" android:layout_height="wrap_content"
-                android:layout_marginStart="8dp" android:text="Descifrar texto" />
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_root"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:paddingTop="56dp"
+        android:paddingBottom="40dp">
+
+        <!-- ═══════════ HEADER ═══════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <FrameLayout
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_card_accent">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_shield"
+                    android:contentDescription="@string/app_name" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/brand_top"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.32"
+                    android:textColor="@color/cyan_500"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/brand_big"
+                    android:textSize="34sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:letterSpacing="0.02"
+                    android:includeFontPadding="false"
+                    android:fontFamily="sans-serif-black" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/badgeOffline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_offline"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:text="@string/badge_offline"
+                android:textSize="9sp"
+                android:letterSpacing="0.12"
+                android:textColor="@color/cyan_500"
+                android:fontFamily="sans-serif-medium" />
         </LinearLayout>
-        <Button android:id="@+id/btnEncryptFile" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginTop="16dp"
-            android:text="📁 Cifrar archivo → .e255" />
-        <Button android:id="@+id/btnDecryptFile" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginTop="8dp"
-            android:text="📂 Descifrar archivo .e255" />
-        <TextView android:id="@+id/statusText" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginTop="20dp"
-            android:textSize="13sp" android:textColor="#888" android:text="Listo." />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/tagline"
+            android:textSize="11sp"
+            android:letterSpacing="0.14"
+            android:textColor="@color/text_tertiary"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- ═══════════ SEGMENTED CONTROL ═══════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/bg_segment_track"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tabText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/bg_segment_selected"
+                android:text="@string/tab_text"
+                android:textSize="13sp"
+                android:letterSpacing="0.14"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/tabFile"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/tab_file"
+                android:textSize="13sp"
+                android:letterSpacing="0.14"
+                android:textStyle="bold"
+                android:textColor="@color/text_secondary"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- ═══════════ PASSWORD CARD ═══════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/bg_card_glass"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CLAVE MAESTRA"
+                android:textSize="10sp"
+                android:letterSpacing="0.24"
+                android:textColor="@color/cyan_500"
+                android:fontFamily="sans-serif-medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_lock"
+                    android:contentDescription="@string/label_password" />
+
+                <EditText
+                    android:id="@+id/passwordInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:background="@null"
+                    android:hint="Introduce tu contraseña"
+                    android:textColorHint="@color/text_tertiary"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionDone"
+                    android:importantForAutofill="no" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══════════ CONTENIDO: TEXTO ═══════════ -->
+        <LinearLayout
+            android:id="@+id/containerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_card_glass"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CONTENIDO"
+                android:textSize="10sp"
+                android:letterSpacing="0.24"
+                android:textColor="@color/cyan_500"
+                android:fontFamily="sans-serif-medium" />
+
+            <EditText
+                android:id="@+id/textInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@null"
+                android:hint="Escribe o pega tu texto aquí…"
+                android:textColorHint="@color/text_tertiary"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:lineSpacingExtra="4dp"
+                android:minLines="6"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:importantForAutofill="no" />
+        </LinearLayout>
+
+        <!-- ═══════════ CONTENIDO: ARCHIVO ═══════════ -->
+        <LinearLayout
+            android:id="@+id/containerFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_card_glass"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="18dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ARCHIVO"
+                android:textSize="10sp"
+                android:letterSpacing="0.24"
+                android:textColor="@color/cyan_500"
+                android:fontFamily="sans-serif-medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:background="@drawable/bg_card_accent">
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_document"
+                        android:contentDescription="@string/tab_file" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/fileName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_no_file"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:maxLines="1"
+                        android:ellipsize="middle" />
+
+                    <TextView
+                        android:id="@+id/fileMeta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="—"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.06" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnPickFile"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_button_secondary"
+                android:text="SELECCIONAR ARCHIVO"
+                android:textSize="12sp"
+                android:textColor="@color/cyan_500"
+                android:letterSpacing="0.12"
+                android:textStyle="bold"
+                android:stateListAnimator="@null"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- ═══════════ ACCIONES ═══════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnEncrypt"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_primary"
+                android:text="CIFRAR"
+                android:textSize="13sp"
+                android:textColor="#04070C"
+                android:letterSpacing="0.14"
+                android:textStyle="bold"
+                android:stateListAnimator="@null"
+                android:fontFamily="sans-serif-black" />
+
+            <Button
+                android:id="@+id/btnDecrypt"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/bg_button_secondary"
+                android:text="DESCIFRAR"
+                android:textSize="13sp"
+                android:textColor="@color/cyan_500"
+                android:letterSpacing="0.14"
+                android:textStyle="bold"
+                android:stateListAnimator="@null"
+                android:fontFamily="sans-serif-black" />
+        </LinearLayout>
+
+        <!-- ═══════════ STATUS ═══════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/statusDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/dot_status" />
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="@string/status_ready"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:letterSpacing="0.06"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- ═══════════ FOOTER ═══════════ -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="34dp"
+            android:background="@drawable/divider_hairline" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/footer_version"
+            android:textColor="@color/text_tertiary"
+            android:textSize="10sp"
+            android:letterSpacing="0.20"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/footer_note"
+            android:textColor="@color/text_disabled"
+            android:textSize="10sp"
+            android:letterSpacing="0.10" />
+
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

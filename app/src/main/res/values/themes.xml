@@ -1,3 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Encryptor255" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="Theme.Encryptor255" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primario -->
+        <item name="colorPrimary">@color/cyan_500</item>
+        <item name="colorOnPrimary">@color/obsidian_950</item>
+        <item name="colorPrimaryContainer">@color/cyan_700</item>
+        <item name="colorOnPrimaryContainer">@color/cyan_400</item>
+        <item name="colorPrimaryInverse">@color/cyan_600</item>
+
+        <!-- Secundario -->
+        <item name="colorSecondary">@color/violet_500</item>
+        <item name="colorOnSecondary">@color/obsidian_950</item>
+        <item name="colorSecondaryContainer">@color/violet_600</item>
+        <item name="colorOnSecondaryContainer">@color/violet_400</item>
+
+        <!-- Terciario -->
+        <item name="colorTertiary">@color/cyan_400</item>
+        <item name="colorOnTertiary">@color/obsidian_950</item>
+
+        <!-- Superficies -->
+        <item name="android:colorBackground">@color/obsidian_900</item>
+        <item name="colorSurface">@color/obsidian_800</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/obsidian_700</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorSurfaceInverse">@color/obsidian_600</item>
+        <item name="colorOutline">@color/divider_strong</item>
+        <item name="colorOutlineVariant">@color/divider</item>
+
+        <!-- Error -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/obsidian_950</item>
+
+        <!-- Sistema -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowBackground">@color/obsidian_900</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+
+        <!-- Tipografía -->
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Encryptor.Headline</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Encryptor.Body</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Encryptor.Label</item>
+    </style>
+
+    <style name="TextAppearance.Encryptor.Headline" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Encryptor.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Encryptor.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="Widget.Encryptor.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:textColor">@color/obsidian_950</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="cornerRadius">18dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.Encryptor.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/cyan_alpha_40</item>
+        <item name="android:textColor">@color/cyan_500</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="cornerRadius">18dp</item>
+    </style>
 </resources>

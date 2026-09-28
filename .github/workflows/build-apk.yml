@@ -1,26 +1,64 @@
 name: Build APK
+
 on:
   push:
     branches: [ main, master ]
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
-      - run: gradle assembleDebug --no-daemon --stacktrace
-      - run: gradle assembleRelease --no-daemon --stacktrace
-      - uses: actions/upload-artifact@v4
+
+      - name: Prepare Android SDK (usar preinstalado del runner)
+        run: |
+          set -e
+          SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          if [ -z "$SDK" ]; then
+            SDK="/usr/local/lib/android/sdk"
+          fi
+          echo "ANDROID SDK = $SDK"
+          echo "sdk.dir=$SDK" > local.properties
+          ls "$SDK" | head
+          # Aceptar licencias + instalar lo que falta
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" --install \
+            "platforms;android-34" \
+            "build-tools;34.0.0" \
+            "platform-tools" >/dev/null 2>&1 || true
+
+      - name: Build Debug APK
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Build Release APK (sin firmar)
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Verificar APKs generados
+        run: |
+          echo "── DEBUG ──"
+          ls -la app/build/outputs/apk/debug/ || true
+          echo "── RELEASE ──"
+          ls -la app/build/outputs/apk/release/ || true
+          file app/build/outputs/apk/debug/*.apk || true
+
+      - name: Subir artefactos
+        uses: actions/upload-artifact@v4
         with:
           name: Encryptor255-APK
           path: |
