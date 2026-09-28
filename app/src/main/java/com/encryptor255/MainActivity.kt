@@ -30,6 +30,18 @@ import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.Locale
+import android.app.AlertDialog
+import android.graphics.Bitmap
+import android.provider.MediaStore
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.Switch
+import androidx.documentfile.provider.DocumentFile
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,6 +68,12 @@ class MainActivity : AppCompatActivity() {
     private var action: Action = Action.ENCRYPT
     private var pickedUri: Uri? = null
     private val pickedUris = mutableListOf<Uri>()
+    private var pendingBundleBytes: ByteArray? = null
+    private var pendingBundleNames: List<String> = emptyList()
+
+    private val pickDirForExtract = registerForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { dirUri -> dirUri?.let { extractBundleTo(it) } }
     private var batchMode = false
 
     private var pendingOpen: ((Uri) -> Unit)? = null
@@ -121,6 +139,18 @@ private val createDoc = registerForActivityResult(
         findViewById<Button>(R.id.btnPickFile).setOnClickListener { withHaptic { pickFile() } }
         findViewById<ImageButton>(R.id.btnCopy).setOnClickListener { withHaptic { copyToClipboard() } }
         findViewById<ImageButton>(R.id.btnShare).setOnClickListener { withHaptic { shareCurrent() } }
+        findViewById<Button>(R.id.btnQrGenerate).setOnClickListener {
+            withHaptic { generateQrFromText() }
+        }
+        findViewById<Button>(R.id.btnQrScan).setOnClickListener {
+            withHaptic { scanQrFromImage() }
+        }
+        findViewById<Switch>(R.id.switchBatch).setOnCheckedChangeListener { _, checked ->
+            batchMode = checked
+            log(if (checked) "> modo lote ON" else "> modo lote OFF")
+            if (!checked) pickedUris.clear()
+        }
+
         findViewById<ImageButton>(R.id.btnClear).setOnClickListener { withHaptic { clearAll() } }
         findViewById<ImageButton>(R.id.btnGenerate).setOnClickListener { withHaptic { generatePassword() } }
         btnTogglePwd.setOnClickListener { withHaptic { togglePasswordVisibility() } }
@@ -308,13 +338,20 @@ private val createDoc = registerForActivityResult(
 
     private fun pickAndEncrypt() {
         val pwd = readPassword() ?: return
-        val uri = pickedUri
-        if (uri == null) { toast("Selecciona un archivo"); return }
-        val name = (queryName(uri) ?: "archivo") + ".e255"
+        if (pickedUris.isEmpty()) { toast("Selecciona archivo(s)"); return }
+
+        val uris = pickedUris.toList()
+        val name = if (uris.size == 1) {
+            (queryName(uris[0]) ?: "archivo") + ".e255"
+        } else {
+            "vault_" + java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US)
+                .format(java.util.Date()) + ".e255"
+        }
+
         pendingCreate = { dst ->
             runJob(
-                block = { encryptFile(uri, dst, pwd); "ok" },
-                onOk = { log("> archivo cifrado → $name") }
+                block = { encryptBundle(uris, dst, pwd) },
+                onOk = { log("> " + uris.size + " archivo(s) cifrado(s) → " + name) }
             )
         }
         createDoc.launch(name)
@@ -322,16 +359,14 @@ private val createDoc = registerForActivityResult(
 
     private fun pickAndDecrypt() {
         val pwd = readPassword() ?: return
-        val uri = pickedUri
+        val uri = pickedUris.firstOrNull() ?: pickedUri
         if (uri == null) { toast("Selecciona un .e255"); return }
         val original = (queryName(uri) ?: "archivo.e255").removeSuffix(".e255")
-        pendingCreate = { dst ->
-            runJob(
-                block = { decryptFile(uri, dst, pwd); "ok" },
-                onOk = { log("> archivo descifrado → $original") }
-            )
-        }
-        createDoc.launch(original)
+
+        runJob(
+            block = { decryptOrExtract(uri, pwd, original) },
+            onOk = { }
+        )
     }
 
     private suspend fun encryptFile(src: Uri, dst: Uri, pwd: CharArray) = withContext(Dispatchers.IO) {

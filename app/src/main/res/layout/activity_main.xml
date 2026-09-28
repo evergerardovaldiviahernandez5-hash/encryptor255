@@ -254,6 +254,40 @@
                 android:inputType="textMultiLine|textNoSuggestions"
                 android:importantForAutofill="no"
                 android:fontFamily="monospace" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnQrGenerate"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_ghost"
+                    android:text="@string/action_qr_generate"
+                    android:textSize="11sp"
+                    android:textColor="@color/terracotta"
+                    android:letterSpacing="0.08"
+                    android:stateListAnimator="@null"
+                    android:fontFamily="sans-serif-medium" />
+
+                <Button
+                    android:id="@+id/btnQrScan"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_button_ghost"
+                    android:text="@string/action_qr_scan"
+                    android:textSize="11sp"
+                    android:textColor="@color/terracotta"
+                    android:letterSpacing="0.08"
+                    android:stateListAnimator="@null"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- ═══════════ CONTENIDO ARCHIVO ═══════════ -->

@@ -54,4 +54,21 @@
     <string name="cd_settings">Abrir ajustes</string>
     <string name="cd_back">Volver</string>
     <string name="batch_count">%1$d archivos seleccionados</string>
+    <string name="action_qr_generate">GENERAR QR</string>
+    <string name="action_qr_scan">LEER QR</string>
+    <string name="qr_dialog_title">Código QR</string>
+    <string name="qr_save">Guardar PNG</string>
+    <string name="qr_empty">Sin contenido</string>
+    <string name="qr_not_found">No se detectó QR en la imagen</string>
+    <string name="qr_too_long">Texto muy largo para QR (máx. 2000 chars)</string>
+    <string name="cd_qr_generate">Generar QR del contenido</string>
+    <string name="cd_qr_scan">Leer QR desde imagen</string>
+    <string name="batch_mode">Modo lote</string>
+    <string name="batch_mode_desc">Cifrar varios archivos en un solo bundle</string>
+    <string name="bundle_empty">Ningún archivo seleccionado</string>
+    <string name="bundle_files_loaded">%1$d archivos cargados</string>
+    <string name="bundle_decrypt_title">Bundle cifrado detectado</string>
+    <string name="bundle_decrypt_msg">Este archivo contiene %1$d archivos. ¿Dónde quieres extraerlos?</string>
+    <string name="bundle_extract">Elegir carpeta…</string>
+    <string name="bundle_extracted">%1$d archivos extraídos</string>
 </resources>
