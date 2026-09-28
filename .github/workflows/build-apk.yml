@@ -26,17 +26,12 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Prepare Android SDK (usar preinstalado del runner)
+      - name: Prepare Android SDK
         run: |
           set -e
           SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
-          if [ -z "$SDK" ]; then
-            SDK="/usr/local/lib/android/sdk"
-          fi
-          echo "ANDROID SDK = $SDK"
+          [ -z "$SDK" ] && SDK="/usr/local/lib/android/sdk"
           echo "sdk.dir=$SDK" > local.properties
-          ls "$SDK" | head
-          # Aceptar licencias + instalar lo que falta
           yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
           "$SDK/cmdline-tools/latest/bin/sdkmanager" --install \
             "platforms;android-34" \
@@ -46,22 +41,12 @@ jobs:
       - name: Build Debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
-      - name: Build Release APK (sin firmar)
-        run: gradle assembleRelease --no-daemon --stacktrace
+      - name: Verificar APK
+        run: ls -lh app/build/outputs/apk/debug/
 
-      - name: Verificar APKs generados
-        run: |
-          echo "── DEBUG ──"
-          ls -la app/build/outputs/apk/debug/ || true
-          echo "── RELEASE ──"
-          ls -la app/build/outputs/apk/release/ || true
-          file app/build/outputs/apk/debug/*.apk || true
-
-      - name: Subir artefactos
+      - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
           name: Encryptor255-APK
-          path: |
-            app/build/outputs/apk/debug/*.apk
-            app/build/outputs/apk/release/*.apk
+          path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
