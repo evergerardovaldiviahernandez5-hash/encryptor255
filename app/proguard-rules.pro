@@ -1,0 +1,3 @@
+-keep class javax.crypto.** { *; }
+-keep class java.security.** { *; }
+-keep class com.encryptor255.CryptoEngine { *; }
