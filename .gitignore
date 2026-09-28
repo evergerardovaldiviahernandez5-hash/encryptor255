@@ -10,3 +10,5 @@
 .cxx
 *.keystore
 *.jks
+*.p12
+*.pem

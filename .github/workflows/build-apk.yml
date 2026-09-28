@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APK + AAB
 
 on:
   push:
@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: read
+
+env:
+  KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
 jobs:
   build:
@@ -38,15 +41,40 @@ jobs:
             "build-tools;34.0.0" \
             "platform-tools" >/dev/null 2>&1 || true
 
+      - name: Decode keystore (si existe)
+        if: env.KEYSTORE_BASE64 != ''
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > ${{ github.workspace }}/release.jks
+          ls -la ${{ github.workspace }}/release.jks
+
       - name: Build Debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
-      - name: Verificar APK
-        run: ls -lh app/build/outputs/apk/debug/
+      - name: Build Release APK + AAB (firmado)
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          ENCRYPTOR255_KEYSTORE_FILE: ${{ github.workspace }}/release.jks
+          ENCRYPTOR255_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          ENCRYPTOR255_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          ENCRYPTOR255_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          gradle assembleRelease bundleRelease --no-daemon --stacktrace
 
-      - name: Subir APK
+      - name: Verificar artefactos
+        run: |
+          echo "── debug ──"
+          ls -la app/build/outputs/apk/debug/ || true
+          echo "── release ──"
+          ls -la app/build/outputs/apk/release/ || true
+          echo "── bundle ──"
+          ls -la app/build/outputs/bundle/release/ || true
+
+      - name: Upload artefactos
         uses: actions/upload-artifact@v4
         with:
-          name: Encryptor255-APK
-          path: app/build/outputs/apk/debug/*.apk
+          name: Encryptor255
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
