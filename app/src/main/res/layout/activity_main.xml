@@ -43,6 +43,16 @@
                 android:letterSpacing="0.01"
                 android:fontFamily="sans-serif-medium" />
 
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_settings"
+                android:contentDescription="@string/cd_settings"
+                android:scaleType="centerInside" />
+
             <TextView
                 android:id="@+id/badgeOffline"
                 android:layout_width="wrap_content"

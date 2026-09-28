@@ -44,4 +44,13 @@
     <string name="strength_fair">ACEPTABLE</string>
     <string name="strength_good">FUERTE</string>
     <string name="strength_strong">BLINDADA</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_biometric">Bloqueo biométrico</string>
+    <string name="settings_biometric_desc">Pedir huella o rostro al abrir la app</string>
+    <string name="settings_security">Seguridad</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="settings_version">Versión 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 permisos · 0 trackers · 0 nube</string>
+    <string name="cd_settings">Abrir ajustes</string>
+    <string name="cd_back">Volver</string>
 </resources>

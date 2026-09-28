@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         window.statusBarColor = android.graphics.Color.TRANSPARENT
         window.navigationBarColor = android.graphics.Color.TRANSPARENT
+        SecurityManager.applySecureFlag(this, true)
         setContentView(R.layout.activity_main)
 
         tabText = findViewById(R.id.tabText)
@@ -101,6 +102,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnClear).setOnClickListener { withHaptic { clearAll() } }
         findViewById<ImageButton>(R.id.btnGenerate).setOnClickListener { withHaptic { generatePassword() } }
         btnTogglePwd.setOnClickListener { withHaptic { togglePasswordVisibility() } }
+
+        findViewById<android.widget.ImageButton>(R.id.btnSettings).setOnClickListener {
+            withHaptic { startActivity(android.content.Intent(this, SettingsActivity::class.java)) }
+        }
 
         passwordInput.doAfterTextChanged { editable ->
             refreshStrength(editable?.toString() ?: "")
@@ -316,10 +321,9 @@ class MainActivity : AppCompatActivity() {
     private fun copyToClipboard() {
         val text = textInput.text.toString()
         if (text.isEmpty()) { toast("Nada que copiar"); return }
-        val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        cm.setPrimaryClip(ClipData.newPlainText("encryptor255", text))
-        log("> copiado al portapapeles (${text.length} chars)")
-        toast("Copiado")
+        SecurityManager.copyAndSelfDestruct(this, text)
+        log("> copiado · autolimpieza en 30s")
+        toast("Copiado · se borrará en 30s")
     }
 
     private fun shareCurrent() {
@@ -383,4 +387,16 @@ class MainActivity : AppCompatActivity() {
     private fun querySize(uri: Uri): Long =
         contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)
             ?.use { c -> if (c.moveToFirst()) c.getLong(0) else 0L } ?: 0L
+
+    override fun onStop() {
+        super.onStop()
+        if (::passwordInput.isInitialized) {
+            val pwd = passwordInput.text?.toString()
+            if (!pwd.isNullOrEmpty()) {
+                val arr = pwd.toCharArray()
+                SecurityManager.wipe(arr)
+            }
+        }
+    }
 }
+
