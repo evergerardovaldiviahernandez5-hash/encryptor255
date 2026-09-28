@@ -62,7 +62,27 @@ class MainActivity : AppCompatActivity() {
     private val openDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { pendingOpen?.invoke(it) }
     }
-    private val createDoc = registerForActivityResult(
+    private val openMulti = registerForActivityResult(
+        ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris ->
+        if (uris.isEmpty()) return@registerForActivityResult
+        pickedUris.clear()
+        pickedUris.addAll(uris)
+        pickedUri = uris.first()
+        batchMode = uris.size > 1
+
+        val total = uris.size
+        fileName.text = if (total == 1) {
+            queryName(uris[0]) ?: "archivo"
+        } else {
+            getString(R.string.batch_count, total)
+        }
+        val totalSize = uris.sumOf { querySize(it) }
+        fileMeta.text = String.format(java.util.Locale.US, "%d archivos · %.2f KB", total, totalSize / 1024.0)
+        log("> $total archivos cargados (${totalSize / 1024} KB)")
+    }
+
+private val createDoc = registerForActivityResult(
         ActivityResultContracts.CreateDocument("application/octet-stream")
     ) { uri -> uri?.let { pendingCreate?.invoke(it) } }
 
@@ -125,7 +145,20 @@ class MainActivity : AppCompatActivity() {
         log("> sistema iniciado")
         log("> aes-256-gcm · pbkdf2-sha512 310k · gzip")
         log("> esperando instrucción_")
-    }
+
+
+        // ═══════════ F4c · Biometría al arrancar ═══════════
+        val prefs = getSharedPreferences("encryptor255_prefs", MODE_PRIVATE)
+        if (prefs.getBoolean("biometric_enabled", false)) {
+            SecurityManager.promptBiometric(
+                this,
+                onSuccess = { log("> identidad verificada") },
+                onError = { msg ->
+                    log("! biometría: $msg")
+                    toast("Verificación cancelada")
+                }
+            )
+        }    }
 
     // ───────────── UI HELPERS ─────────────
 
@@ -259,8 +292,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun pickFile() {
-        pendingOpen = { uri -> showPicked(uri) }
-        openDoc.launch(arrayOf("*/*"))
+        openMulti.launch(arrayOf("*/*"))
     }
 
     private fun showPicked(uri: Uri) {
@@ -327,6 +359,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shareCurrent() {
+        // Si hay archivo(s) seleccionado(s) → compartir archivo(s)
+        if (mode == Mode.FILE && pickedUris.isNotEmpty()) {
+            shareFiles()
+            return
+        }
+        // Si hay texto → compartir texto
         val text = textInput.text.toString()
         if (text.isEmpty()) { toast("Nada que compartir"); return }
         val i = Intent(Intent.ACTION_SEND).apply {
@@ -334,8 +372,54 @@ class MainActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TEXT, text)
             putExtra(Intent.EXTRA_SUBJECT, "Encryptor 255")
         }
-        startActivity(Intent.createChooser(i, "Compartir"))
-        log("> compartiendo ${text.length} chars")
+        startActivity(Intent.createChooser(i, "Compartir texto"))
+        log("> compartiendo texto (${text.length} chars)")
+    }
+
+    private fun shareFiles() {
+        lifecycleScope.launch {
+            try {
+                val cacheDir = java.io.File(cacheDir, "shared").apply { mkdirs() }
+                // Limpiar previos
+                cacheDir.listFiles()?.forEach { it.delete() }
+
+                val uris = mutableListOf<Uri>()
+                for ((idx, src) in pickedUris.withIndex()) {
+                    val name = queryName(src) ?: "archivo_${idx + 1}"
+                    val outFile = java.io.File(cacheDir, name)
+                    withContext(Dispatchers.IO) {
+                        contentResolver.openInputStream(src)!!.use { ins ->
+                            outFile.outputStream().use { outs -> ins.copyTo(outs) }
+                        }
+                    }
+                    val contentUri = androidx.core.content.FileProvider.getUriForFile(
+                        this@MainActivity,
+                        "${packageName}.fileprovider",
+                        outFile
+                    )
+                    uris.add(contentUri)
+                }
+
+                val intent = if (uris.size == 1) {
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = "*/*"
+                        putExtra(Intent.EXTRA_STREAM, uris[0])
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                } else {
+                    Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                        type = "*/*"
+                        putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                }
+                startActivity(Intent.createChooser(intent, "Compartir archivo(s)"))
+                log("> compartiendo ${uris.size} archivo(s)")
+            } catch (t: Throwable) {
+                log("! error al compartir: ${t.message}")
+                toast("No se pudo compartir")
+            }
+        }
     }
 
     private fun clearAll() {

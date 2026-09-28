@@ -3,7 +3,7 @@
     <string name="app_name">Encryptor 255</string>
     <string name="brand_top">ENCRYPTOR</string>
     <string name="brand_big">255</string>
-    <string name="tagline">AES-256-GCM · PBKDF2-SHA512 310K · GZIP\nNada sale de este dispositivo.</string>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · offline</string>
     <string name="badge_offline">● OFFLINE</string>
 
     <string name="tab_text">Texto</string>
