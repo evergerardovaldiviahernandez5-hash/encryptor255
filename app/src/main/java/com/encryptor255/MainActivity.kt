@@ -55,6 +55,8 @@ class MainActivity : AppCompatActivity() {
     private var mode: Mode = Mode.TEXT
     private var action: Action = Action.ENCRYPT
     private var pickedUri: Uri? = null
+    private val pickedUris = mutableListOf<Uri>()
+    private var batchMode = false
 
     private var pendingOpen: ((Uri) -> Unit)? = null
     private var pendingCreate: ((Uri) -> Unit)? = null

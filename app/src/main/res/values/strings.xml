@@ -53,4 +53,5 @@
     <string name="settings_offline_note">0 permisos · 0 trackers · 0 nube</string>
     <string name="cd_settings">Abrir ajustes</string>
     <string name="cd_back">Volver</string>
+    <string name="batch_count">%1$d archivos seleccionados</string>
 </resources>
