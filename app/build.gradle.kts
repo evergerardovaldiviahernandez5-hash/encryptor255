@@ -19,6 +19,7 @@ android {
             create("release") {
                 storeFile = file(ksPath)
                 storePassword = System.getenv("ENCRYPTOR255_KEYSTORE_PASSWORD")
+                storeType = "PKCS12"
                 keyAlias = System.getenv("ENCRYPTOR255_KEY_ALIAS")
                 keyPassword = System.getenv("ENCRYPTOR255_KEY_PASSWORD")
             }
