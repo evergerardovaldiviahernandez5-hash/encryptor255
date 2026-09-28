@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
@@ -82,6 +83,20 @@ class MainActivity : AppCompatActivity() {
     private val openDoc = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { pendingOpen?.invoke(it) }
     }
+    private val singleDoc = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri == null) return@registerForActivityResult
+        pickedUris.clear()
+        pickedUris.add(uri)
+        pickedUri = uri
+        val name = queryName(uri) ?: "archivo"
+        val size = querySize(uri)
+        fileName.text = name
+        fileMeta.text = String.format(java.util.Locale.US, "%d bytes · %.2f KB", size, size / 1024.0)
+        log("> archivo cargado: " + name)
+    }
+
     private val openMulti = registerForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments()
     ) { uris ->
@@ -324,7 +339,13 @@ private val createDoc = registerForActivityResult(
     }
 
     private fun pickFile() {
-        openMulti.launch(arrayOf("*/*"))
+        if (batchMode) {
+            log("> selección múltiple activa")
+            openMulti.launch(arrayOf("*/*"))
+        } else {
+            log("> selección simple")
+            singleDoc.launch(arrayOf("*/*"))
+        }
     }
 
     private fun showPicked(uri: Uri) {
@@ -480,7 +501,7 @@ private val createDoc = registerForActivityResult(
         lifecycleScope.launch {
             log("> trabajando…")
             try {
-                val msg = withContext(Dispatchers.IO) { block() }
+                val msg = withContext(Dispatchers.IO + NonCancellable) { block() }
                 onOk(msg)
             } catch (t: Throwable) {
                 val m = "! error: ${t.message ?: t.javaClass.simpleName}"
