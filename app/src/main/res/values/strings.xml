@@ -71,4 +71,10 @@
     <string name="bundle_decrypt_msg">Este archivo contiene %1$d archivos. ¿Dónde quieres extraerlos?</string>
     <string name="bundle_extract">Elegir carpeta…</string>
     <string name="bundle_extracted">%1$d archivos extraídos</string>
+    <string name="action_cancel">CANCELAR</string>
+    <string name="action_hash">HASH SHA-256</string>
+    <string name="hash_dialog_title">Huella SHA-256</string>
+    <string name="hash_calculating">Calculando…</string>
+    <string name="hash_error">No se pudo leer el archivo</string>
+    <string name="progress_processing">Procesando…</string>
 </resources>

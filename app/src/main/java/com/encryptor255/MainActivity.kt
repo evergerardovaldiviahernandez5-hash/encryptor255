@@ -26,6 +26,9 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import java.security.MessageDigest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
@@ -63,6 +66,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var strengthLabel: TextView
     private lateinit var btnTogglePwd: ImageButton
     private lateinit var badge: View
+    private lateinit var progressContainer: View
+    private lateinit var progressBar: android.widget.ProgressBar
+    private lateinit var progressLabel: TextView
+    private var currentJob: Job? = null
 
     private var pwdVisible = false
     private var mode: Mode = Mode.TEXT
@@ -142,6 +149,9 @@ private val createDoc = registerForActivityResult(
         strengthLabel = findViewById(R.id.strengthLabel)
         btnTogglePwd = findViewById(R.id.btnTogglePwd)
         badge = findViewById(R.id.badgeOffline)
+        progressContainer = findViewById(R.id.progressContainer)
+        progressBar = findViewById(R.id.progressBar)
+        progressLabel = findViewById(R.id.progressLabel)
 
         tabText.setOnClickListener { withHaptic { switchMode(Mode.TEXT) } }
         tabFile.setOnClickListener { withHaptic { switchMode(Mode.FILE) } }
@@ -166,6 +176,16 @@ private val createDoc = registerForActivityResult(
             if (!checked) pickedUris.clear()
         }
 
+        findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            withHaptic {
+                currentJob?.cancel()
+                log("> operación cancelada")
+                hideProgress()
+            }
+        }
+        findViewById<Button>(R.id.btnHash).setOnClickListener {
+            withHaptic { computeFileHash() }
+        }
         findViewById<ImageButton>(R.id.btnClear).setOnClickListener { withHaptic { clearAll() } }
         findViewById<ImageButton>(R.id.btnGenerate).setOnClickListener { withHaptic { generatePassword() } }
         btnTogglePwd.setOnClickListener { withHaptic { togglePasswordVisibility() } }
@@ -498,17 +518,39 @@ private val createDoc = registerForActivityResult(
     }
 
     private fun runJob(block: suspend () -> String, onOk: (String) -> Unit) {
-        lifecycleScope.launch {
-            log("> trabajando…")
+        currentJob?.cancel()
+        currentJob = lifecycleScope.launch {
+            showProgress("Procesando…")
             try {
-                val msg = withContext(Dispatchers.IO + NonCancellable) { block() }
+                val msg = withContext(Dispatchers.IO) { block() }
                 onOk(msg)
+                hideProgress()
+            } catch (ce: kotlinx.coroutines.CancellationException) {
+                log("> cancelado")
+                hideProgress()
+                throw ce
             } catch (t: Throwable) {
                 val m = "! error: ${t.message ?: t.javaClass.simpleName}"
                 log(m)
                 toast(m)
+                hideProgress()
             }
         }
+    }
+
+    private fun showProgress(label: String) {
+        progressContainer.visibility = View.VISIBLE
+        progressBar.isIndeterminate = true
+        progressLabel.text = label
+    }
+
+    private fun hideProgress() {
+        progressContainer.visibility = View.GONE
+        progressBar.progress = 0
+    }
+
+    private fun updateProgress(bytes: Long) {
+        progressLabel.text = "Procesando… ${bytes / 1024} KB"
     }
 
     private fun log(line: String) {
@@ -551,7 +593,9 @@ private val createDoc = registerForActivityResult(
             if (uris.size == 1) {
                 contentResolver.openInputStream(uris[0])!!.use { ins ->
                     contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
-                        CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = true)
+                        CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = true) { bytes, _ ->
+                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(bytes) }
+                        }
                     }
                 }
                 return@withContext "ok"
@@ -573,7 +617,9 @@ private val createDoc = registerForActivityResult(
 
             java.io.ByteArrayInputStream(zipBytes).use { ins ->
                 contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
-                    CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = false)
+                    CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = false) { bytes, _ ->
+                        lifecycleScope.launch(Dispatchers.Main) { updateProgress(bytes) }
+                    }
                 }
             }
             "ok"
@@ -745,6 +791,54 @@ private val createDoc = registerForActivityResult(
             }
         }
         openDoc.launch(arrayOf("image/*"))
+    }
+
+
+    // ═══════════════════════════════════════════
+    // F5b · Hash SHA-256 de archivo
+    // ═══════════════════════════════════════════
+    private fun computeFileHash() {
+        val uri = pickedUris.firstOrNull() ?: pickedUri
+        if (uri == null) { toast("Selecciona un archivo primero"); return }
+        val name = queryName(uri) ?: "archivo"
+
+        runJob(
+            block = {
+                val md = MessageDigest.getInstance("SHA-256")
+                val buf = ByteArray(64 * 1024)
+                var total = 0L
+                contentResolver.openInputStream(uri)!!.use { ins ->
+                    while (true) {
+                        val n = ins.read(buf)
+                        if (n < 0) break
+                        md.update(buf, 0, n)
+                        total += n
+                        withContext(Dispatchers.Main) { updateProgress(total) }
+                    }
+                }
+                val hex = md.digest().joinToString("") { "%02x".format(it) }
+                "ok:$hex"
+            },
+            onOk = { result ->
+                val hex = result.removePrefix("ok:")
+                log("> sha256: ${hex.take(16)}…")
+                showHashDialog(name, hex)
+            }
+        )
+    }
+
+    private fun showHashDialog(name: String, hex: String) {
+        val formatted = hex.chunked(4).joinToString(" ")
+        val msg = "Archivo: $name\n\n$formatted"
+        AlertDialog.Builder(this)
+            .setTitle(R.string.hash_dialog_title)
+            .setMessage(msg)
+            .setPositiveButton("Copiar") { _, _ ->
+                SecurityManager.copyAndSelfDestruct(this, hex)
+                toast("Hash copiado")
+            }
+            .setNegativeButton("Cerrar", null)
+            .show()
     }
 
 }

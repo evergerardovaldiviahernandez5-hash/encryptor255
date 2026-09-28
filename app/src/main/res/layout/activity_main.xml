@@ -416,6 +416,20 @@
                 android:textStyle="bold"
                 android:stateListAnimator="@null"
                 android:fontFamily="sans-serif-medium" />
+            <Button
+                android:id="@+id/btnHash"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_button_ghost"
+                android:text="@string/action_hash"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:letterSpacing="0.06"
+                android:textStyle="bold"
+                android:stateListAnimator="@null"
+                android:fontFamily="sans-serif-medium" />
+
         </LinearLayout>
 
         <!-- ═══════════ ACCIONES ═══════════ -->
@@ -454,6 +468,58 @@
                 android:stateListAnimator="@null"
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/progressContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_glass"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/progressLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/progress_processing"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace" />
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_button_ghost"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="@string/action_cancel"
+                    android:textColor="@color/error"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.06"
+                    android:stateListAnimator="@null" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="10dp"
+                android:indeterminate="true"
+                android:progressTint="@color/terracotta"
+                android:progressBackgroundTint="@color/warm_600" />
+        </LinearLayout>
+
 
         <!-- ═══════════ UTILIDADES ═══════════ -->
         <LinearLayout

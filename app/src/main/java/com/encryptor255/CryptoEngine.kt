@@ -60,7 +60,8 @@ object CryptoEngine {
         input: InputStream,
         output: OutputStream,
         password: CharArray,
-        compress: Boolean = true
+        compress: Boolean = true,
+        onProgress: ((Long, Long) -> Unit)? = null
     ) {
         val salt = ByteArray(SALT_LEN).also(rng::nextBytes)
         val iv = ByteArray(IV_LEN).also(rng::nextBytes)
@@ -83,14 +84,22 @@ object CryptoEngine {
         val finalOut: OutputStream =
             if (compress) GZIPOutputStream(cipherOut, BUFFER) else cipherOut
 
-        input.copyTo(finalOut, BUFFER)
+        var total: Long = 0
+        val buf = ByteArray(BUFFER)
+        while (true) {
+            val n = input.read(buf)
+            if (n < 0) break
+            finalOut.write(buf, 0, n)
+            total += n
+            onProgress?.invoke(total, -1L)
+        }
         finalOut.close()
         key.fill(0)
     }
 
     // ─────────── DECRYPT (v1 o v2) ───────────
 
-    fun decrypt(input: InputStream, output: OutputStream, password: CharArray) {
+    fun decrypt(input: InputStream, output: OutputStream, password: CharArray, onProgress: ((Long, Long) -> Unit)? = null) {
         val header = ByteArray(HEADER_LEN)
         readFully(input, header)
 
@@ -119,7 +128,15 @@ object CryptoEngine {
         val finalIn: InputStream =
             if (compressed) GZIPInputStream(cipherIn, BUFFER) else cipherIn
 
-        finalIn.copyTo(output, BUFFER)
+        var total: Long = 0
+        val buf = ByteArray(BUFFER)
+        while (true) {
+            val n = finalIn.read(buf)
+            if (n < 0) break
+            output.write(buf, 0, n)
+            total += n
+            onProgress?.invoke(total, -1L)
+        }
         finalIn.close()
         key.fill(0)
     }
