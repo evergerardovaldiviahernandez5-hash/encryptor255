@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · hors ligne</string>
+    <string name="badge_offline">● HORS LIGNE</string>
+    <string name="tab_text">Texte</string>
+    <string name="tab_file">Fichier</string>
+    <string name="label_password">CLÉ MAÎTRESSE</string>
+    <string name="label_content">CONTENU</string>
+    <string name="label_terminal">TERMINAL</string>
+    <string name="hint_password">Entrez votre mot de passe…</string>
+    <string name="hint_content">Écrivez ou collez votre texte…</string>
+    <string name="hint_no_file">Aucun fichier sélectionné</string>
+    <string name="action_encrypt">CHIFFRER</string>
+    <string name="action_decrypt">DÉCHIFFRER</string>
+    <string name="action_pick_file">CHOISIR</string>
+    <string name="action_cancel">ANNULER</string>
+    <string name="action_hash">HACHAGE SHA-256</string>
+    <string name="action_qr_generate">GÉNÉRER QR</string>
+    <string name="action_qr_scan">LIRE QR</string>
+    <string name="status_ready">&gt; système prêt\n&gt; en attente_</string>
+    <string name="footer_note">0 permissions · 0 traqueurs · 0 cloud</string>
+    <string name="strength_weak">FAIBLE</string>
+    <string name="strength_fair">MOYEN</string>
+    <string name="strength_good">FORT</string>
+    <string name="strength_strong">BLINDÉ</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_biometric">Verrouillage biométrique</string>
+    <string name="settings_biometric_desc">Demander empreinte/visage à l ouverture</string>
+    <string name="settings_security">Sécurité</string>
+    <string name="settings_about">À propos</string>
+    <string name="batch_mode">Mode lot</string>
+    <string name="batch_mode_desc">Chiffrer plusieurs fichiers en un seul lot</string>
+</resources>

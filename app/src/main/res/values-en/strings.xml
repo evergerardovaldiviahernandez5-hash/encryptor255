@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · offline</string>
+    <string name="badge_offline">● OFFLINE</string>
+    <string name="tab_text">Text</string>
+    <string name="tab_file">File</string>
+    <string name="label_password">MASTER KEY</string>
+    <string name="label_content">CONTENT</string>
+    <string name="label_terminal">TERMINAL</string>
+    <string name="hint_password">Enter your password…</string>
+    <string name="hint_content">Write or paste your text…</string>
+    <string name="hint_no_file">No file selected</string>
+    <string name="action_encrypt">ENCRYPT</string>
+    <string name="action_decrypt">DECRYPT</string>
+    <string name="action_pick_file">SELECT FILE</string>
+    <string name="action_cancel">CANCEL</string>
+    <string name="action_hash">SHA-256 HASH</string>
+    <string name="action_qr_generate">QR GEN</string>
+    <string name="action_qr_scan">QR SCAN</string>
+    <string name="status_ready">&gt; system ready\n&gt; awaiting input_</string>
+    <string name="footer_note">0 permissions · 0 trackers · 0 cloud</string>
+    <string name="strength_weak">WEAK</string>
+    <string name="strength_fair">FAIR</string>
+    <string name="strength_good">STRONG</string>
+    <string name="strength_strong">FORTIFIED</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_biometric">Biometric lock</string>
+    <string name="settings_biometric_desc">Ask for fingerprint/face on open</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_about">About</string>
+    <string name="batch_mode">Batch mode</string>
+    <string name="batch_mode_desc">Encrypt multiple files into one bundle</string>
+</resources>

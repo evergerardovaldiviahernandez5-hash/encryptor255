@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · 离线</string>
+    <string name="badge_offline">● 离线</string>
+    <string name="tab_text">文本</string>
+    <string name="tab_file">文件</string>
+    <string name="label_password">主密钥</string>
+    <string name="label_content">内容</string>
+    <string name="label_terminal">终端</string>
+    <string name="hint_password">输入密码…</string>
+    <string name="hint_content">输入或粘贴文本…</string>
+    <string name="hint_no_file">未选择文件</string>
+    <string name="action_encrypt">加密</string>
+    <string name="action_decrypt">解密</string>
+    <string name="action_pick_file">选择文件</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_hash">SHA-256 哈希</string>
+    <string name="action_qr_generate">生成二维码</string>
+    <string name="action_qr_scan">扫描二维码</string>
+    <string name="status_ready">&gt; 系统就绪\n&gt; 等待输入_</string>
+    <string name="footer_note">0 权限 · 0 追踪 · 0 云</string>
+    <string name="strength_weak">弱</string>
+    <string name="strength_fair">中</string>
+    <string name="strength_good">强</string>
+    <string name="strength_strong">强化</string>
+    <string name="settings_title">设置</string>
+    <string name="settings_biometric">生物识别锁定</string>
+    <string name="settings_biometric_desc">打开时要求指纹/面部</string>
+    <string name="settings_security">安全</string>
+    <string name="settings_about">关于</string>
+    <string name="batch_mode">批处理模式</string>
+    <string name="batch_mode_desc">将多个文件加密为一个包</string>
+</resources>

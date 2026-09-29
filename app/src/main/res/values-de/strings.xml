@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · offline</string>
+    <string name="badge_offline">● OFFLINE</string>
+    <string name="tab_text">Text</string>
+    <string name="tab_file">Datei</string>
+    <string name="label_password">HAUPTSCHLÜSSEL</string>
+    <string name="label_content">INHALT</string>
+    <string name="label_terminal">TERMINAL</string>
+    <string name="hint_password">Passwort eingeben…</string>
+    <string name="hint_content">Text eingeben oder einfügen…</string>
+    <string name="hint_no_file">Keine Datei ausgewählt</string>
+    <string name="action_encrypt">VERSCHLÜSSELN</string>
+    <string name="action_decrypt">ENTSCHLÜSSELN</string>
+    <string name="action_pick_file">DATEI WÄHLEN</string>
+    <string name="action_cancel">ABBRECHEN</string>
+    <string name="action_hash">SHA-256 HASH</string>
+    <string name="action_qr_generate">QR GEN</string>
+    <string name="action_qr_scan">QR LESEN</string>
+    <string name="status_ready">&gt; System bereit\n&gt; warte auf Eingabe_</string>
+    <string name="footer_note">0 Berechtigungen · 0 Tracker · 0 Cloud</string>
+    <string name="strength_weak">SCHWACH</string>
+    <string name="strength_fair">MITTEL</string>
+    <string name="strength_good">STARK</string>
+    <string name="strength_strong">GEPANZERT</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_biometric">Biometrische Sperre</string>
+    <string name="settings_biometric_desc">Beim Öffnen nach Fingerabdruck/Gesicht fragen</string>
+    <string name="settings_security">Sicherheit</string>
+    <string name="settings_about">Über</string>
+    <string name="batch_mode">Stapelmodus</string>
+    <string name="batch_mode_desc">Mehrere Dateien verschlüsseln</string>
+</resources>

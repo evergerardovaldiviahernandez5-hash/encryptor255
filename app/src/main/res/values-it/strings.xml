@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · offline</string>
+    <string name="badge_offline">● OFFLINE</string>
+    <string name="tab_text">Testo</string>
+    <string name="tab_file">File</string>
+    <string name="label_password">CHIAVE MAESTRA</string>
+    <string name="label_content">CONTENUTO</string>
+    <string name="label_terminal">TERMINALE</string>
+    <string name="hint_password">Inserisci la password…</string>
+    <string name="hint_content">Scrivi o incolla il testo…</string>
+    <string name="hint_no_file">Nessun file selezionato</string>
+    <string name="action_encrypt">CIFRA</string>
+    <string name="action_decrypt">DECIFRA</string>
+    <string name="action_pick_file">SELEZIONA FILE</string>
+    <string name="action_cancel">ANNULLA</string>
+    <string name="action_hash">HASH SHA-256</string>
+    <string name="action_qr_generate">GEN QR</string>
+    <string name="action_qr_scan">LEGGI QR</string>
+    <string name="status_ready">&gt; sistema pronto\n&gt; in attesa_</string>
+    <string name="footer_note">0 permessi · 0 tracker · 0 cloud</string>
+    <string name="strength_weak">DEBOLE</string>
+    <string name="strength_fair">MEDIA</string>
+    <string name="strength_good">FORTE</string>
+    <string name="strength_strong">BLINDATA</string>
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_biometric">Blocco biometrico</string>
+    <string name="settings_biometric_desc">Chiedi impronta/volto all apertura</string>
+    <string name="settings_security">Sicurezza</string>
+    <string name="settings_about">Info</string>
+    <string name="batch_mode">Modalità batch</string>
+    <string name="batch_mode_desc">Cifra più file in un bundle</string>
+</resources>

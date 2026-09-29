@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · بلا إنترنت</string>
+    <string name="badge_offline">● بدون إنترنت</string>
+    <string name="tab_text">نص</string>
+    <string name="tab_file">ملف</string>
+    <string name="label_password">المفتاح الرئيسي</string>
+    <string name="label_content">المحتوى</string>
+    <string name="label_terminal">الطرفية</string>
+    <string name="hint_password">أدخل كلمة المرور…</string>
+    <string name="hint_content">اكتب أو الصق النص…</string>
+    <string name="hint_no_file">لم يتم اختيار ملف</string>
+    <string name="action_encrypt">تشفير</string>
+    <string name="action_decrypt">فك التشفير</string>
+    <string name="action_pick_file">اختر ملف</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_hash">SHA-256</string>
+    <string name="action_qr_generate">إنشاء QR</string>
+    <string name="action_qr_scan">قراءة QR</string>
+    <string name="status_ready">&gt; النظام جاهز\n&gt; في الانتظار_</string>
+    <string name="footer_note">0 أذونات · 0 متتبعات · 0 سحابة</string>
+    <string name="strength_weak">ضعيف</string>
+    <string name="strength_fair">مقبول</string>
+    <string name="strength_good">قوي</string>
+    <string name="strength_strong">محصّن</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_biometric">قفل بيومتري</string>
+    <string name="settings_biometric_desc">اطلب البصمة/الوجه عند الفتح</string>
+    <string name="settings_security">الأمان</string>
+    <string name="settings_about">حول</string>
+    <string name="batch_mode">وضع الدفعة</string>
+    <string name="batch_mode_desc">تشفير عدة ملفات في حزمة</string>
+</resources>

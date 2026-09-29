@@ -88,13 +88,17 @@ object SecurityManager {
     // BIOMETRÍA
     // ─────────────────────────────────────────
 
-    private const val AUTHENTICATORS =
-        BiometricManager.Authenticators.BIOMETRIC_STRONG or
-        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+    private fun authenticators(): Int =
+        if (android.os.Build.VERSION.SDK_INT >= 30) {
+            BiometricManager.Authenticators.BIOMETRIC_STRONG or
+            BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        } else {
+            BiometricManager.Authenticators.BIOMETRIC_WEAK
+        }
 
     fun canUseBiometric(context: Context): Boolean {
         val bm = BiometricManager.from(context)
-        return bm.canAuthenticate(AUTHENTICATORS) == BiometricManager.BIOMETRIC_SUCCESS
+        return bm.canAuthenticate(authenticators()) == BiometricManager.BIOMETRIC_SUCCESS
     }
 
     fun promptBiometric(
@@ -123,7 +127,7 @@ object SecurityManager {
         val info = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Encryptor 255")
             .setSubtitle("Verifica tu identidad")
-            .setAllowedAuthenticators(AUTHENTICATORS)
+            .setAllowedAuthenticators(authenticators())
             .build()
 
         prompt.authenticate(info)

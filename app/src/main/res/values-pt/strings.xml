@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · offline</string>
+    <string name="badge_offline">● OFFLINE</string>
+    <string name="tab_text">Texto</string>
+    <string name="tab_file">Arquivo</string>
+    <string name="label_password">CHAVE MESTRA</string>
+    <string name="label_content">CONTEÚDO</string>
+    <string name="label_terminal">TERMINAL</string>
+    <string name="hint_password">Digite sua senha…</string>
+    <string name="hint_content">Escreva ou cole seu texto…</string>
+    <string name="hint_no_file">Nenhum arquivo selecionado</string>
+    <string name="action_encrypt">CRIPTOGRAFAR</string>
+    <string name="action_decrypt">DESCRIPTOGRAFAR</string>
+    <string name="action_pick_file">SELECIONAR</string>
+    <string name="action_cancel">CANCELAR</string>
+    <string name="action_hash">HASH SHA-256</string>
+    <string name="action_qr_generate">GERAR QR</string>
+    <string name="action_qr_scan">LER QR</string>
+    <string name="status_ready">&gt; sistema pronto\n&gt; aguardando_</string>
+    <string name="footer_note">0 permissões · 0 rastreadores · 0 nuvem</string>
+    <string name="strength_weak">FRACA</string>
+    <string name="strength_fair">RAZOÁVEL</string>
+    <string name="strength_good">FORTE</string>
+    <string name="strength_strong">BLINDADA</string>
+    <string name="settings_title">Configurações</string>
+    <string name="settings_biometric">Bloqueio biométrico</string>
+    <string name="settings_biometric_desc">Pedir impressão/rosto ao abrir</string>
+    <string name="settings_security">Segurança</string>
+    <string name="settings_about">Sobre</string>
+    <string name="batch_mode">Modo lote</string>
+    <string name="batch_mode_desc">Criptografar vários arquivos em um pacote</string>
+</resources>

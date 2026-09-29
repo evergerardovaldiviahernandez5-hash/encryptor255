@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · オフライン</string>
+    <string name="badge_offline">● オフライン</string>
+    <string name="tab_text">テキスト</string>
+    <string name="tab_file">ファイル</string>
+    <string name="label_password">マスターキー</string>
+    <string name="label_content">コンテンツ</string>
+    <string name="label_terminal">ターミナル</string>
+    <string name="hint_password">パスワードを入力…</string>
+    <string name="hint_content">テキストを入力または貼り付け…</string>
+    <string name="hint_no_file">ファイルが選択されていません</string>
+    <string name="action_encrypt">暗号化</string>
+    <string name="action_decrypt">復号</string>
+    <string name="action_pick_file">ファイル選択</string>
+    <string name="action_cancel">キャンセル</string>
+    <string name="action_hash">SHA-256</string>
+    <string name="action_qr_generate">QR生成</string>
+    <string name="action_qr_scan">QR読取</string>
+    <string name="status_ready">&gt; システム準備完了\n&gt; 待機中_</string>
+    <string name="footer_note">0 権限 · 0 トラッカー · 0 クラウド</string>
+    <string name="strength_weak">弱い</string>
+    <string name="strength_fair">普通</string>
+    <string name="strength_good">強い</string>
+    <string name="strength_strong">強化</string>
+    <string name="settings_title">設定</string>
+    <string name="settings_biometric">生体認証ロック</string>
+    <string name="settings_biometric_desc">起動時に指紋/顔を要求</string>
+    <string name="settings_security">セキュリティ</string>
+    <string name="settings_about">情報</string>
+    <string name="batch_mode">バッチモード</string>
+    <string name="batch_mode_desc">複数ファイルを1つに暗号化</string>
+</resources>

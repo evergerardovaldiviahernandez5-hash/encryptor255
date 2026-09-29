@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · ऑफ़लाइन</string>
+    <string name="badge_offline">● ऑफ़लाइन</string>
+    <string name="tab_text">टेक्स्ट</string>
+    <string name="tab_file">फ़ाइल</string>
+    <string name="label_password">मास्टर कुंजी</string>
+    <string name="label_content">सामग्री</string>
+    <string name="label_terminal">टर्मिनल</string>
+    <string name="hint_password">अपना पासवर्ड दर्ज करें…</string>
+    <string name="hint_content">अपना टेक्स्ट लिखें या पेस्ट करें…</string>
+    <string name="hint_no_file">कोई फ़ाइल चयनित नहीं</string>
+    <string name="action_encrypt">एन्क्रिप्ट</string>
+    <string name="action_decrypt">डिक्रिप्ट</string>
+    <string name="action_pick_file">फ़ाइल चुनें</string>
+    <string name="action_cancel">रद्द करें</string>
+    <string name="action_hash">SHA-256 हैश</string>
+    <string name="action_qr_generate">QR बनाएं</string>
+    <string name="action_qr_scan">QR पढ़ें</string>
+    <string name="status_ready">&gt; सिस्टम तैयार\n&gt; प्रतीक्षा में_</string>
+    <string name="footer_note">0 अनुमतियाँ · 0 ट्रैकर · 0 क्लाउड</string>
+    <string name="strength_weak">कमज़ोर</string>
+    <string name="strength_fair">ठीक</string>
+    <string name="strength_good">मज़बूत</string>
+    <string name="strength_strong">सुरक्षित</string>
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="settings_biometric">बायोमेट्रिक लॉक</string>
+    <string name="settings_biometric_desc">खोलते समय फ़िंगरप्रिंट/चेहरा मांगें</string>
+    <string name="settings_security">सुरक्षा</string>
+    <string name="settings_about">परिचय</string>
+    <string name="batch_mode">बैच मोड</string>
+    <string name="batch_mode_desc">कई फ़ाइलों को एक बंडल में एन्क्रिप्ट करें</string>
+</resources>

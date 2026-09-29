@@ -76,7 +76,8 @@ class MainActivity : AppCompatActivity() {
     private var action: Action = Action.ENCRYPT
     private var pickedUri: Uri? = null
     private val pickedUris = mutableListOf<Uri>()
-    private var pendingBundleBytes: ByteArray? = null
+    private var pendingSingleFile: java.io.File? = null
+    private var pendingBundleFile: java.io.File? = null
     private var pendingBundleNames: List<String> = emptyList()
 
     private val pickDirForExtract = registerForActivityResult(
@@ -457,27 +458,23 @@ private val createDoc = registerForActivityResult(
     private fun shareFiles() {
         lifecycleScope.launch {
             try {
-                val cacheDir = java.io.File(cacheDir, "shared").apply { mkdirs() }
-                // Limpiar previos
-                cacheDir.listFiles()?.forEach { it.delete() }
-
+                val cacheDir = java.io.File(cacheDir, "shared")
                 val uris = mutableListOf<Uri>()
-                for ((idx, src) in pickedUris.withIndex()) {
-                    val name = queryName(src) ?: "archivo_${idx + 1}"
-                    val outFile = java.io.File(cacheDir, name)
-                    withContext(Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
+                    cacheDir.mkdirs()
+                    cacheDir.listFiles()?.forEach { it.delete() }
+                    for ((idx, src) in pickedUris.withIndex()) {
+                        val name = queryName(src) ?: "archivo_${idx + 1}"
+                        val outFile = java.io.File(cacheDir, name)
                         contentResolver.openInputStream(src)!!.use { ins ->
-                            outFile.outputStream().use { outs -> ins.copyTo(outs) }
+                            outFile.outputStream().use { outs -> ins.copyTo(outs, 64 * 1024) }
                         }
+                        val contentUri = androidx.core.content.FileProvider.getUriForFile(
+                            this@MainActivity, "${packageName}.fileprovider", outFile
+                        )
+                        uris.add(contentUri)
                     }
-                    val contentUri = androidx.core.content.FileProvider.getUriForFile(
-                        this@MainActivity,
-                        "${packageName}.fileprovider",
-                        outFile
-                    )
-                    uris.add(contentUri)
                 }
-
                 val intent = if (uris.size == 1) {
                     Intent(Intent.ACTION_SEND).apply {
                         type = "*/*"
@@ -491,7 +488,7 @@ private val createDoc = registerForActivityResult(
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                 }
-                startActivity(Intent.createChooser(intent, "Compartir archivo(s)"))
+                startActivity(Intent.createChooser(intent, "Compartir"))
                 log("> compartiendo ${uris.size} archivo(s)")
             } catch (t: Throwable) {
                 log("! error al compartir: ${t.message}")
@@ -593,140 +590,40 @@ private val createDoc = registerForActivityResult(
             if (uris.size == 1) {
                 contentResolver.openInputStream(uris[0])!!.use { ins ->
                     contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
-                        CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = true) { bytes, _ ->
-                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(bytes) }
+                        CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = true) { b, _ ->
+                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(b) }
                         }
                     }
                 }
                 return@withContext "ok"
             }
-
-            val zipBytes = java.io.ByteArrayOutputStream().use { mem ->
-                ZipOutputStream(BufferedOutputStream(mem)).use { zos ->
-                    uris.forEachIndexed { idx, src ->
-                        val name = queryName(src) ?: "archivo_$idx"
-                        zos.putNextEntry(ZipEntry(name))
-                        contentResolver.openInputStream(src)!!.use { ins ->
-                            ins.copyTo(zos, 64 * 1024)
-                        }
-                        zos.closeEntry()
-                    }
-                }
-                mem.toByteArray()
-            }
-
-            java.io.ByteArrayInputStream(zipBytes).use { ins ->
-                contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
-                    CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = false) { bytes, _ ->
-                        lifecycleScope.launch(Dispatchers.Main) { updateProgress(bytes) }
-                    }
-                }
-            }
-            "ok"
-        }
-
-    private suspend fun decryptOrExtract(uri: Uri, pwd: CharArray, baseName: String): String =
-        withContext(Dispatchers.IO) {
-            val decrypted = java.io.ByteArrayOutputStream()
-            contentResolver.openInputStream(uri)!!.use { ins ->
-                CryptoEngine.decrypt(ins, decrypted, pwd.copyOf())
-            }
-            val bytes = decrypted.toByteArray()
-
-            val isZip = bytes.size >= 4 &&
-                bytes[0] == 0x50.toByte() && bytes[1] == 0x4B.toByte() &&
-                bytes[2] == 0x03.toByte() && bytes[3] == 0x04.toByte()
-
-            if (!isZip) {
-                withContext(Dispatchers.Main) {
-                    pendingCreate = { out ->
-                        lifecycleScope.launch {
-                            withContext(Dispatchers.IO) {
-                                contentResolver.openOutputStream(out, "wt")!!.use { os ->
-                                    os.write(bytes)
-                                }
-                            }
-                            log("> archivo descifrado → " + baseName)
-                        }
-                    }
-                    createDoc.launch(baseName)
-                }
-                return@withContext "single"
-            }
-
-            val names = mutableListOf<String>()
-            ZipInputStream(java.io.ByteArrayInputStream(bytes)).use { zis ->
-                var entry = zis.nextEntry
-                while (entry != null) {
-                    names.add(entry.name)
-                    entry = zis.nextEntry
-                }
-            }
-            withContext(Dispatchers.Main) {
-                pendingBundleBytes = bytes
-                pendingBundleNames = names
-                log("> bundle detectado: " + names.size + " archivos")
-                pickDirForExtract.launch(null)
-            }
-            "bundle"
-        }
-
-    private fun extractBundleTo(dirUri: Uri) {
-        val bytes = pendingBundleBytes ?: return
-        lifecycleScope.launch {
+            val tmp = java.io.File(cacheDir, "enc_${System.currentTimeMillis()}.zip")
             try {
-                val count = withContext(Dispatchers.IO) {
-                    val root = androidx.documentfile.provider.DocumentFile
-                        .fromTreeUri(this@MainActivity, dirUri)
-                        ?: throw IllegalStateException("No se pudo abrir carpeta")
-                    var n = 0
-                    ZipInputStream(java.io.ByteArrayInputStream(bytes)).use { zis ->
-                        var entry = zis.nextEntry
-                        while (entry != null) {
-                            val safeName = entry.name.replace("..", "_").substringAfterLast('/')
-                            val outFile = root.createFile("application/octet-stream", safeName)
-                            if (outFile != null) {
-                                contentResolver.openOutputStream(outFile.uri, "wt")!!.use { os ->
-                                    zis.copyTo(os, 64 * 1024)
-                                }
-                                n++
+                java.io.FileOutputStream(tmp).use { fos ->
+                    java.util.zip.ZipOutputStream(java.io.BufferedOutputStream(fos)).use { zos ->
+                        uris.forEachIndexed { idx, src ->
+                            val name = queryName(src) ?: "archivo_$idx"
+                            zos.putNextEntry(java.util.zip.ZipEntry(name))
+                            contentResolver.openInputStream(src)!!.use { ins ->
+                                ins.copyTo(zos, 64 * 1024)
                             }
-                            zis.closeEntry()
-                            entry = zis.nextEntry
+                            zos.closeEntry()
+                            withContext(Dispatchers.Main) {
+                                log("> empaquetando ${idx + 1}/${uris.size}: $name")
+                            }
                         }
                     }
-                    n
                 }
-                log("> " + count + " archivos extraídos")
-                toast(getString(R.string.bundle_extracted, count))
-                pendingBundleBytes = null
-                pendingBundleNames = emptyList()
-            } catch (t: Throwable) {
-                log("! error al extraer: " + t.message)
-                toast("No se pudo extraer")
-            }
+                java.io.FileInputStream(tmp).use { ins ->
+                    contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
+                        CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = false) { b, _ ->
+                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(b) }
+                        }
+                    }
+                }
+                "ok"
+            } finally { tmp.delete() }
         }
-    }
-
-    // ═══════════════════════════════════════════
-    // F5a · QR
-    // ═══════════════════════════════════════════
-
-    private fun generateQrFromText() {
-        val text = textInput.text.toString()
-        if (text.isEmpty()) { toast(getString(R.string.qr_empty)); return }
-        if (text.length > 2000) { toast(getString(R.string.qr_too_long)); return }
-
-        log("> generando QR (" + text.length + " chars)…")
-        try {
-            val bmp = QrUtils.generate(text, 800)
-            showQrDialog(bmp)
-            log("> QR mostrado")
-        } catch (t: Throwable) {
-            log("! error generando QR: " + t.message)
-            toast("Error al generar QR")
-        }
-    }
 
     private fun showQrDialog(bmp: Bitmap) {
         val pad = (24 * resources.displayMetrics.density).toInt()

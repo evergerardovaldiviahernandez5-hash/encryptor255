@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tagline">AES-256-GCM · Argon2id · GZIP · офлайн</string>
+    <string name="badge_offline">● ОФЛАЙН</string>
+    <string name="tab_text">Текст</string>
+    <string name="tab_file">Файл</string>
+    <string name="label_password">МАСТЕР-КЛЮЧ</string>
+    <string name="label_content">СОДЕРЖИМОЕ</string>
+    <string name="label_terminal">ТЕРМИНАЛ</string>
+    <string name="hint_password">Введите пароль…</string>
+    <string name="hint_content">Напишите или вставьте текст…</string>
+    <string name="hint_no_file">Файл не выбран</string>
+    <string name="action_encrypt">ЗАШИФРОВАТЬ</string>
+    <string name="action_decrypt">РАСШИФРОВАТЬ</string>
+    <string name="action_pick_file">ВЫБРАТЬ ФАЙЛ</string>
+    <string name="action_cancel">ОТМЕНА</string>
+    <string name="action_hash">SHA-256</string>
+    <string name="action_qr_generate">QR ГЕН</string>
+    <string name="action_qr_scan">QR ЧТЕНИЕ</string>
+    <string name="status_ready">&gt; система готова\n&gt; ожидание_</string>
+    <string name="footer_note">0 разрешений · 0 трекеров · 0 облака</string>
+    <string name="strength_weak">СЛАБЫЙ</string>
+    <string name="strength_fair">СРЕДНИЙ</string>
+    <string name="strength_good">СИЛЬНЫЙ</string>
+    <string name="strength_strong">БРОНЯ</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_biometric">Биометрия</string>
+    <string name="settings_biometric_desc">Запрос отпечатка/лица при открытии</string>
+    <string name="settings_security">Безопасность</string>
+    <string name="settings_about">О программе</string>
+    <string name="batch_mode">Пакетный режим</string>
+    <string name="batch_mode_desc">Зашифровать несколько файлов</string>
+</resources>
