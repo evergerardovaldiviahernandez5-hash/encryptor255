@@ -742,7 +742,7 @@ private val createDoc = registerForActivityResult(
     // ═══════════════════════════════════════════
     // decryptOrExtract — descifra a temp file, detecta ZIP
     // ═══════════════════════════════════════════
-    private suspend fun decryptOrExtract(uri: Uri, pwd: CharArray, baseName: String) =
+    private suspend fun decryptOrExtract(uri: Uri, pwd: CharArray, baseName: String): String =
         withContext(Dispatchers.IO) {
             val tmp = java.io.File(cacheDir, "dec_${System.currentTimeMillis()}.tmp")
             try {
@@ -797,6 +797,7 @@ private val createDoc = registerForActivityResult(
                     log("> bundle: ${names.size} archivos")
                     pickDirForExtract.launch(null)
                 }
+                "bundle"
             } catch (t: Throwable) {
                 tmp.delete()
                 throw t
