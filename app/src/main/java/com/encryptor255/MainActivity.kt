@@ -738,4 +738,130 @@ private val createDoc = registerForActivityResult(
             .show()
     }
 
+
+    // ═══════════════════════════════════════════
+    // decryptOrExtract — descifra a temp file, detecta ZIP
+    // ═══════════════════════════════════════════
+    private suspend fun decryptOrExtract(uri: Uri, pwd: CharArray, baseName: String) =
+        withContext(Dispatchers.IO) {
+            val tmp = java.io.File(cacheDir, "dec_${System.currentTimeMillis()}.tmp")
+            try {
+                java.io.FileOutputStream(tmp).use { fos ->
+                    contentResolver.openInputStream(uri)!!.use { ins ->
+                        CryptoEngine.decrypt(ins, fos, pwd.copyOf()) { bytes, _ ->
+                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(bytes) }
+                        }
+                    }
+                }
+
+                val header = ByteArray(4)
+                java.io.FileInputStream(tmp).use { fis -> fis.read(header) }
+                val isZip = header[0] == 0x50.toByte() && header[1] == 0x4B.toByte() &&
+                            header[2] == 0x03.toByte() && header[3] == 0x04.toByte()
+
+                if (!isZip) {
+                    withContext(Dispatchers.Main) {
+                        pendingSingleFile = tmp
+                        pendingCreate = { out ->
+                            lifecycleScope.launch {
+                                try {
+                                    withContext(Dispatchers.IO) {
+                                        contentResolver.openOutputStream(out, "wt")!!.use { os ->
+                                            java.io.FileInputStream(tmp).use { fis ->
+                                                fis.copyTo(os, 64 * 1024)
+                                            }
+                                        }
+                                    }
+                                    log("> archivo descifrado")
+                                } catch (t: Throwable) {
+                                    log("! error: ${t.message}")
+                                } finally {
+                                    tmp.delete()
+                                    pendingSingleFile = null
+                                }
+                            }
+                        }
+                        createDoc.launch(baseName)
+                    }
+                    return@withContext
+                }
+
+                val names = mutableListOf<String>()
+                java.util.zip.ZipInputStream(java.io.FileInputStream(tmp)).use { zis ->
+                    var e = zis.nextEntry
+                    while (e != null) { names.add(e.name); e = zis.nextEntry }
+                }
+                withContext(Dispatchers.Main) {
+                    pendingBundleFile = tmp
+                    pendingBundleNames = names
+                    log("> bundle: ${names.size} archivos")
+                    pickDirForExtract.launch(null)
+                }
+            } catch (t: Throwable) {
+                tmp.delete()
+                throw t
+            }
+        }
+
+    // ═══════════════════════════════════════════
+    // extractBundleTo — extrae el ZIP descifrado
+    // ═══════════════════════════════════════════
+    private fun extractBundleTo(dirUri: Uri) {
+        val tmp = pendingBundleFile ?: return
+        lifecycleScope.launch {
+            try {
+                val count = withContext(Dispatchers.IO) {
+                    val root = androidx.documentfile.provider.DocumentFile
+                        .fromTreeUri(this@MainActivity, dirUri)
+                        ?: throw IllegalStateException("Carpeta inaccesible")
+                    var n = 0
+                    java.util.zip.ZipInputStream(java.io.FileInputStream(tmp)).use { zis ->
+                        var entry = zis.nextEntry
+                        while (entry != null) {
+                            val safe = entry.name.replace("..", "_").substringAfterLast('/')
+                            val out = root.createFile("application/octet-stream", safe)
+                            if (out != null) {
+                                contentResolver.openOutputStream(out.uri, "wt")!!.use { os ->
+                                    zis.copyTo(os, 64 * 1024)
+                                }
+                                n++
+                            }
+                            zis.closeEntry()
+                            entry = zis.nextEntry
+                        }
+                    }
+                    n
+                }
+                log("> $count archivos extraídos")
+                toast(getString(R.string.bundle_extracted, count))
+            } catch (t: Throwable) {
+                log("! error al extraer: ${t.message}")
+                toast("No se pudo extraer")
+            } finally {
+                tmp.delete()
+                pendingBundleFile = null
+                pendingBundleNames = emptyList()
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // generateQrFromText — genera QR del input
+    // ═══════════════════════════════════════════
+    private fun generateQrFromText() {
+        val text = textInput.text.toString()
+        if (text.isEmpty()) { toast(getString(R.string.qr_empty)); return }
+        if (text.length > 2000) { toast(getString(R.string.qr_too_long)); return }
+
+        log("> generando QR (" + text.length + " chars)…")
+        try {
+            val bmp = QrUtils.generate(text, 800)
+            showQrDialog(bmp)
+            log("> QR mostrado")
+        } catch (t: Throwable) {
+            log("! error generando QR: " + t.message)
+            toast("Error al generar QR")
+        }
+    }
+
 }
