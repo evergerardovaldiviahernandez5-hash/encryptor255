@@ -764,7 +764,7 @@ private val createDoc = registerForActivityResult(
                         if (n < 0) break
                         md.update(buf, 0, n)
                         total += n
-                        withContext(Dispatchers.Main) { updateProgress(total) }
+                        withContext(Dispatchers.Main) { updateProgress(total, -1L) }
                     }
                 }
                 val hex = md.digest().joinToString("") { "%02x".format(it) }
@@ -937,5 +937,26 @@ private val createDoc = registerForActivityResult(
             @Suppress("DEPRECATION")
             resources.updateConfiguration(config, resources.displayMetrics)
         } catch (_: Throwable) { }
+    }
+
+    private fun showQrDialog(bmp: android.graphics.Bitmap) {
+        val pad = (24 * resources.displayMetrics.density).toInt()
+        val size = (260 * resources.displayMetrics.density).toInt()
+
+        val container = android.widget.FrameLayout(this)
+        container.setPadding(pad, pad, pad, pad)
+
+        val iv = android.widget.ImageView(this)
+        iv.layoutParams = android.widget.FrameLayout.LayoutParams(size, size)
+        iv.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+        iv.setImageBitmap(bmp)
+        container.addView(iv)
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.qr_dialog_title)
+            .setView(container)
+            .setPositiveButton(R.string.qr_save) { _, _ -> saveQrToFile(bmp) }
+            .setNegativeButton("Cerrar", null)
+            .show()
     }
 }
