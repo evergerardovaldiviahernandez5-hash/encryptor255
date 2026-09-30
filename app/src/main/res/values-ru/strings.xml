@@ -37,4 +37,9 @@
     <string name="settings_biometric_unavailable">Биометрия недоступна</string>
     <string name="cd_settings">Открыть настройки</string>
     <string name="cd_back">Назад</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_language_desc">Сменить язык</string>
+    <string name="settings_language_system">Система</string>
+    <string name="settings_language_restart">Перезапустите</string>
+    <string name="settings_dialog_language">Выберите язык</string>
 </resources>

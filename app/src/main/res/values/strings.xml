@@ -80,4 +80,10 @@
     <string name="settings_biometric_on">Bloqueo biométrico activado</string>
     <string name="settings_biometric_off">Desactivado</string>
     <string name="settings_biometric_unavailable">Biometría no disponible en este dispositivo</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_desc">Cambiar el idioma de la app</string>
+    <string name="settings_language_system">Sistema</string>
+    <string name="settings_language_restart">Reinicia la app para aplicar</string>
+    <string name="settings_dialog_language">Selecciona idioma</string>
+    <string name="progress_percent">%1\$d%%</string>
 </resources>

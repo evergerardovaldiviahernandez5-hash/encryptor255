@@ -37,4 +37,9 @@
     <string name="settings_biometric_unavailable">Biometrics not available</string>
     <string name="cd_settings">Open settings</string>
     <string name="cd_back">Back</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_desc">Change app language</string>
+    <string name="settings_language_system">System</string>
+    <string name="settings_language_restart">Restart app to apply</string>
+    <string name="settings_dialog_language">Select language</string>
 </resources>

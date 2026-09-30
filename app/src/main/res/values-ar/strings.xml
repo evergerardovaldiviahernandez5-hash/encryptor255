@@ -37,4 +37,9 @@
     <string name="settings_biometric_unavailable">البصمة غير متوفرة</string>
     <string name="cd_settings">فتح الإعدادات</string>
     <string name="cd_back">رجوع</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_language_desc">تغيير لغة التطبيق</string>
+    <string name="settings_language_system">النظام</string>
+    <string name="settings_language_restart">أعد التشغيل</string>
+    <string name="settings_dialog_language">اختر اللغة</string>
 </resources>

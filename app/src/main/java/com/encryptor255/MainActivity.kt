@@ -135,6 +135,9 @@ private val createDoc = registerForActivityResult(
         window.statusBarColor = android.graphics.Color.TRANSPARENT
         window.navigationBarColor = android.graphics.Color.TRANSPARENT
         SecurityManager.applySecureFlag(this, true)
+        // ═══════════ F5e · Aplicar idioma guardado ═══════════
+        applySavedLanguage()
+
         setContentView(R.layout.activity_main)
 
         tabText = findViewById(R.id.tabText)
@@ -547,8 +550,16 @@ private val createDoc = registerForActivityResult(
         progressBar.progress = 0
     }
 
-    private fun updateProgress(bytes: Long) {
-        progressLabel.text = "Procesando… ${bytes / 1024} KB"
+    private fun updateProgress(bytes: Long, total: Long = -1L) {
+        if (total > 0) {
+            val pct = ((bytes * 100) / total).coerceIn(0, 100).toInt()
+            progressBar.isIndeterminate = false
+            progressBar.progress = pct
+            progressLabel.text = "Procesando… ${bytes / 1024} KB · $pct%"
+        } else {
+            progressBar.isIndeterminate = true
+            progressLabel.text = "Procesando… ${bytes / 1024} KB"
+        }
     }
 
     private fun log(line: String) {
@@ -866,4 +877,22 @@ private val createDoc = registerForActivityResult(
         }
     }
 
+
+    // ═══════════════════════════════════════════
+    // F5e · Aplicar idioma guardado
+    // ═══════════════════════════════════════════
+    private fun applySavedLanguage() {
+        val prefs = getSharedPreferences("encryptor255_prefs", MODE_PRIVATE)
+        val code = prefs.getString("app_language", "system") ?: "system"
+        if (code == "system") return
+        try {
+            val locale = java.util.Locale(code)
+            java.util.Locale.setDefault(locale)
+            val config = android.content.res.Configuration(resources.configuration)
+            if (android.os.Build.VERSION.SDK_INT >= 24) config.setLocale(locale)
+            else @Suppress("DEPRECATION") config.locale = locale
+            @Suppress("DEPRECATION")
+            resources.updateConfiguration(config, resources.displayMetrics)
+        } catch (_: Throwable) { }
+    }
 }

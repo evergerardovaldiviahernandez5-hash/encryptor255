@@ -37,4 +37,9 @@
     <string name="settings_biometric_unavailable">生物识别不可用</string>
     <string name="cd_settings">打开设置</string>
     <string name="cd_back">返回</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_language_desc">更改应用语言</string>
+    <string name="settings_language_system">系统</string>
+    <string name="settings_language_restart">重启以应用</string>
+    <string name="settings_dialog_language">选择语言</string>
 </resources>

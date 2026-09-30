@@ -6,12 +6,16 @@ import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.app.AlertDialog
+import android.content.res.Configuration
+import java.util.Locale
 
 class SettingsActivity : AppCompatActivity() {
 
     companion object {
         private const val PREFS = "encryptor255_prefs"
         private const val KEY_BIO = "biometric_enabled"
+        private const val KEY_LANG = "app_language"
     }
 
     private lateinit var prefs: android.content.SharedPreferences
@@ -42,6 +46,16 @@ class SettingsActivity : AppCompatActivity() {
             prefs.edit().putBoolean(KEY_BIO, checked).apply()
             toast(if (checked) getString(R.string.settings_biometric_on)
               else getString(R.string.settings_biometric_off))
+        }
+
+        
+        // ═══════════ F5e · Selector de idioma ═══════════
+        val langValue = findViewById<android.widget.TextView>(R.id.txtLanguageValue)
+        val currentLang = prefs.getString(KEY_LANG, "system") ?: "system"
+        langValue.text = languageLabel(currentLang)
+
+        langValue.parent.parent.setOnClickListener {
+            showLanguageDialog(currentLang)
         }
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener {

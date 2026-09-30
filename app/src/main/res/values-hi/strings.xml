@@ -37,4 +37,9 @@
     <string name="settings_biometric_unavailable">बायोमेट्रिक्स उपलब्ध नहीं</string>
     <string name="cd_settings">सेटिंग्स खोलें</string>
     <string name="cd_back">वापस</string>
+    <string name="settings_language">भाषा</string>
+    <string name="settings_language_desc">ऐप भाषा बदलें</string>
+    <string name="settings_language_system">सिस्टम</string>
+    <string name="settings_language_restart">रीस्टार्ट करें</string>
+    <string name="settings_dialog_language">भाषा चुनें</string>
 </resources>

@@ -37,4 +37,9 @@
     <string name="settings_biometric_unavailable">Biométrie non disponible</string>
     <string name="cd_settings">Ouvrir les paramètres</string>
     <string name="cd_back">Retour</string>
+    <string name="settings_language">Langue</string>
+    <string name="settings_language_desc">Changer la langue</string>
+    <string name="settings_language_system">Système</string>
+    <string name="settings_language_restart">Redémarrer pour appliquer</string>
+    <string name="settings_dialog_language">Choisir la langue</string>
 </resources>
