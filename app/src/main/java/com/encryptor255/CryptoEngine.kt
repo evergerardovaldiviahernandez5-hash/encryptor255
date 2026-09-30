@@ -40,7 +40,7 @@ object CryptoEngine {
     private const val IV_LEN = 12
     private const val TAG_BITS = 128
     private const val KEY_BITS = 256
-    private const val BUFFER = 64 * 1024
+    private const val BUFFER = 256 * 1024
     private const val HEADER_LEN = 4 + 1 + 1 + SALT_LEN + IV_LEN
 
     // PBKDF2 (v1, legacy)
@@ -48,8 +48,8 @@ object CryptoEngine {
 
     // Argon2id (v2) — OWASP 2024 recomendación
     private const val ARGON2_ITERATIONS = 3
-    private const val ARGON2_MEMORY_KIB = 65536    // 64 MiB
-    private const val ARGON2_PARALLELISM = 2
+    private const val ARGON2_MEMORY_KIB = 32768    // 32 MiB (más rápido en móvil)
+    private const val ARGON2_PARALLELISM = 1
 
     private val rng = SecureRandom()
     private val argon2 = Argon2Kt()

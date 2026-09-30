@@ -77,4 +77,7 @@
     <string name="hash_calculating">Calculando…</string>
     <string name="hash_error">No se pudo leer el archivo</string>
     <string name="progress_processing">Procesando…</string>
+    <string name="settings_biometric_on">Bloqueo biométrico activado</string>
+    <string name="settings_biometric_off">Desactivado</string>
+    <string name="settings_biometric_unavailable">Biometría no disponible en este dispositivo</string>
 </resources>

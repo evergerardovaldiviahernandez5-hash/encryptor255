@@ -30,4 +30,11 @@
     <string name="settings_about">حول</string>
     <string name="batch_mode">وضع الدفعة</string>
     <string name="batch_mode_desc">تشفير عدة ملفات في حزمة</string>
+    <string name="settings_version">الإصدار 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 أذونات · 0 متتبعات · 0 سحابة</string>
+    <string name="settings_biometric_on">تم تفعيل القفل البيومتري</string>
+    <string name="settings_biometric_off">معطل</string>
+    <string name="settings_biometric_unavailable">البصمة غير متوفرة</string>
+    <string name="cd_settings">فتح الإعدادات</string>
+    <string name="cd_back">رجوع</string>
 </resources>

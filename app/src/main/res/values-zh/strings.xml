@@ -30,4 +30,11 @@
     <string name="settings_about">关于</string>
     <string name="batch_mode">批处理模式</string>
     <string name="batch_mode_desc">将多个文件加密为一个包</string>
+    <string name="settings_version">版本 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 权限 · 0 追踪 · 0 云</string>
+    <string name="settings_biometric_on">生物识别已启用</string>
+    <string name="settings_biometric_off">已禁用</string>
+    <string name="settings_biometric_unavailable">生物识别不可用</string>
+    <string name="cd_settings">打开设置</string>
+    <string name="cd_back">返回</string>
 </resources>

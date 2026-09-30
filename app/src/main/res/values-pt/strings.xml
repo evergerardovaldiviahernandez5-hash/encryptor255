@@ -30,4 +30,11 @@
     <string name="settings_about">Sobre</string>
     <string name="batch_mode">Modo lote</string>
     <string name="batch_mode_desc">Criptografar vários arquivos em um pacote</string>
+    <string name="settings_version">Versão 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 permissões · 0 rastreadores · 0 nuvem</string>
+    <string name="settings_biometric_on">Bloqueio biométrico ativado</string>
+    <string name="settings_biometric_off">Desativado</string>
+    <string name="settings_biometric_unavailable">Biometria não disponível</string>
+    <string name="cd_settings">Abrir configurações</string>
+    <string name="cd_back">Voltar</string>
 </resources>

@@ -30,4 +30,11 @@
     <string name="settings_about">情報</string>
     <string name="batch_mode">バッチモード</string>
     <string name="batch_mode_desc">複数ファイルを1つに暗号化</string>
+    <string name="settings_version">バージョン 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 権限 · 0 トラッカー · 0 クラウド</string>
+    <string name="settings_biometric_on">生体認証ロック有効</string>
+    <string name="settings_biometric_off">無効</string>
+    <string name="settings_biometric_unavailable">生体認証を利用できません</string>
+    <string name="cd_settings">設定を開く</string>
+    <string name="cd_back">戻る</string>
 </resources>

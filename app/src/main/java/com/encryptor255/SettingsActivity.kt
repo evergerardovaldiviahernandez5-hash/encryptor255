@@ -36,11 +36,12 @@ class SettingsActivity : AppCompatActivity() {
         switchBio.setOnCheckedChangeListener { _, checked ->
             if (checked && !SecurityManager.canUseBiometric(this)) {
                 switchBio.isChecked = false
-                toast("Biometría no disponible en este dispositivo")
+                toast(getString(R.string.settings_biometric_unavailable))
                 return@setOnCheckedChangeListener
             }
             prefs.edit().putBoolean(KEY_BIO, checked).apply()
-            toast(if (checked) "Bloqueo biométrico activado" else "Desactivado")
+            toast(if (checked) getString(R.string.settings_biometric_on)
+              else getString(R.string.settings_biometric_off))
         }
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener {

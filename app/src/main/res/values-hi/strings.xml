@@ -30,4 +30,11 @@
     <string name="settings_about">परिचय</string>
     <string name="batch_mode">बैच मोड</string>
     <string name="batch_mode_desc">कई फ़ाइलों को एक बंडल में एन्क्रिप्ट करें</string>
+    <string name="settings_version">संस्करण 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 अनुमतियाँ · 0 ट्रैकर · 0 क्लाउड</string>
+    <string name="settings_biometric_on">बायोमेट्रिक लॉक सक्रिय</string>
+    <string name="settings_biometric_off">अक्षम</string>
+    <string name="settings_biometric_unavailable">बायोमेट्रिक्स उपलब्ध नहीं</string>
+    <string name="cd_settings">सेटिंग्स खोलें</string>
+    <string name="cd_back">वापस</string>
 </resources>

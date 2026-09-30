@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: android.widget.ProgressBar
     private lateinit var progressLabel: TextView
     private var currentJob: Job? = null
+    private val cryptoDispatcher = Dispatchers.IO.limitedParallelism(2)
 
     private var pwdVisible = false
     private var mode: Mode = Mode.TEXT
@@ -586,7 +587,7 @@ private val createDoc = registerForActivityResult(
     // ═══════════════════════════════════════════
 
     private suspend fun encryptBundle(uris: List<Uri>, dst: Uri, pwd: CharArray): String =
-        withContext(Dispatchers.IO) {
+        withContext(cryptoDispatcher) {
             if (uris.size == 1) {
                 contentResolver.openInputStream(uris[0])!!.use { ins ->
                     contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
@@ -743,7 +744,7 @@ private val createDoc = registerForActivityResult(
     // decryptOrExtract — descifra a temp file, detecta ZIP
     // ═══════════════════════════════════════════
     private suspend fun decryptOrExtract(uri: Uri, pwd: CharArray, baseName: String): String =
-        withContext(Dispatchers.IO) {
+        withContext(cryptoDispatcher) {
             val tmp = java.io.File(cacheDir, "dec_${System.currentTimeMillis()}.tmp")
             try {
                 java.io.FileOutputStream(tmp).use { fos ->

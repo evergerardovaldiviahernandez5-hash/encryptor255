@@ -30,4 +30,11 @@
     <string name="settings_about">О программе</string>
     <string name="batch_mode">Пакетный режим</string>
     <string name="batch_mode_desc">Зашифровать несколько файлов</string>
+    <string name="settings_version">Версия 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 разрешений · 0 трекеров · 0 облака</string>
+    <string name="settings_biometric_on">Биометрия включена</string>
+    <string name="settings_biometric_off">Отключено</string>
+    <string name="settings_biometric_unavailable">Биометрия недоступна</string>
+    <string name="cd_settings">Открыть настройки</string>
+    <string name="cd_back">Назад</string>
 </resources>

@@ -30,4 +30,11 @@
     <string name="settings_about">À propos</string>
     <string name="batch_mode">Mode lot</string>
     <string name="batch_mode_desc">Chiffrer plusieurs fichiers en un seul lot</string>
+    <string name="settings_version">Version 2.5 · Cipher Warm</string>
+    <string name="settings_offline_note">0 permissions · 0 traqueurs · 0 cloud</string>
+    <string name="settings_biometric_on">Verrouillage biométrique activé</string>
+    <string name="settings_biometric_off">Désactivé</string>
+    <string name="settings_biometric_unavailable">Biométrie non disponible</string>
+    <string name="cd_settings">Ouvrir les paramètres</string>
+    <string name="cd_back">Retour</string>
 </resources>
