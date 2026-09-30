@@ -43,4 +43,19 @@
     <string name="settings_language_restart">Reinicie para aplicar</string>
     <string name="settings_dialog_language">Selecione o idioma</string>
     <string name="settings_preferences">PREFERÊNCIAS</string>
+    <string name="log_ready">▸ sistema pronto\n▸ aguardando_</string>
+    <string name="log_encrypting_text">▸ criptografando texto…</string>
+    <string name="log_decrypting_text">▸ descriptografando texto…</string>
+    <string name="log_working">▸ trabalhando…</string>
+    <string name="log_cancelled">▸ operação cancelada</string>
+    <string name="log_progress">Processando… %1\$d KB · %2\$d%%</string>
+    <string name="log_progress_indeterminate">Processando… %1\$d KB</string>
+    <string name="log_no_content">! sem conteúdo</string>
+    <string name="log_no_ciphertext">! sem ciphertext</string>
+    <string name="log_no_password">! senha vazia</string>
+    <string name="log_copied">▸ copiado · autolimpeza em 30s</string>
+    <string name="log_cleared">▸ estado limpo</string>
+    <string name="log_qr_generated">▸ QR gerado</string>
+    <string name="log_qr_read">▸ QR lido (%1\$d chars)</string>
+    <string name="log_qr_not_found">! QR não detectado</string>
 </resources>

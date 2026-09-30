@@ -43,4 +43,19 @@
     <string name="settings_language_restart">Restart app to apply</string>
     <string name="settings_dialog_language">Select language</string>
     <string name="settings_preferences">PREFERENCES</string>
+    <string name="log_ready">▸ system ready\n▸ awaiting input_</string>
+    <string name="log_encrypting_text">▸ encrypting text…</string>
+    <string name="log_decrypting_text">▸ decrypting text…</string>
+    <string name="log_working">▸ working…</string>
+    <string name="log_cancelled">▸ operation cancelled</string>
+    <string name="log_progress">Processing… %1\$d KB · %2\$d%%</string>
+    <string name="log_progress_indeterminate">Processing… %1\$d KB</string>
+    <string name="log_no_content">! no content</string>
+    <string name="log_no_ciphertext">! no ciphertext</string>
+    <string name="log_no_password">! empty password</string>
+    <string name="log_copied">▸ copied · auto-clear in 30s</string>
+    <string name="log_cleared">▸ state cleared</string>
+    <string name="log_qr_generated">▸ QR generated</string>
+    <string name="log_qr_read">▸ QR read (%1\$d chars)</string>
+    <string name="log_qr_not_found">! QR not detected</string>
 </resources>

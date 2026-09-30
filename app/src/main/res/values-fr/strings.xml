@@ -43,4 +43,18 @@
     <string name="settings_language_restart">Redémarrer pour appliquer</string>
     <string name="settings_dialog_language">Choisir la langue</string>
     <string name="settings_preferences">PRÉFÉRENCES</string>
+    <string name="log_ready">▸ système prêt\n▸ en attente_</string>
+    <string name="log_encrypting_text">▸ chiffrement…</string>
+    <string name="log_decrypting_text">▸ déchiffrement…</string>
+    <string name="log_working">▸ en cours…</string>
+    <string name="log_cancelled">▸ annulé</string>
+    <string name="log_progress">Traitement… %1\$d Ko · %2\$d%%</string>
+    <string name="log_progress_indeterminate">Traitement… %1\$d Ko</string>
+    <string name="log_no_content">! pas de contenu</string>
+    <string name="log_no_password">! mot de passe vide</string>
+    <string name="log_copied">▸ copié · effacé dans 30s</string>
+    <string name="log_cleared">▸ état réinitialisé</string>
+    <string name="log_qr_generated">▸ QR généré</string>
+    <string name="log_qr_read">▸ QR lu (%1\$d chars)</string>
+    <string name="log_qr_not_found">! QR non détecté</string>
 </resources>

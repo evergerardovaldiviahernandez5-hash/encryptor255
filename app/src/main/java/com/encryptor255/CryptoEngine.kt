@@ -7,28 +7,15 @@ import java.security.SecureRandom
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import javax.crypto.Cipher
-import javax.crypto.CipherInputStream
-import javax.crypto.CipherOutputStream
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 /**
- * Formato .e255:
- *
- * v1 (legacy, solo lectura):
- *   [0..3]   "E255"
- *   [4]      version = 1
- *   [5]      flags   bit0 = GZIP
- *   [6..21]  salt    16 bytes
- *   [22..33] IV      12 bytes
- *   [34..]   AES-256-GCM (payload + tag 16B)
- *   Key = PBKDF2-HMAC-SHA512(310000 iter, salt, 256 bit)
- *
- * v2 (actual, escritura):
- *   mismo header, version = 2
- *   Key = Argon2id(m=64 MiB, t=3, p=2, out=32 bytes)
+ * Streaming AES-256-GCM puro. NO comprime internamente.
+ * El flag `dataIsCompressed` solo indica qué escribir en el header.
+ * La compresión la maneja el caller (MainActivity) con temp files si es necesario.
  */
 object CryptoEngine {
     private const val MAGIC = "E255"
@@ -43,24 +30,20 @@ object CryptoEngine {
     private const val BUFFER = 256 * 1024
     private const val HEADER_LEN = 4 + 1 + 1 + SALT_LEN + IV_LEN
 
-    // PBKDF2 (v1, legacy)
     private const val PBKDF2_ITERATIONS = 310_000
-
-    // Argon2id (v2) — OWASP 2024 recomendación
     private const val ARGON2_ITERATIONS = 3
-    private const val ARGON2_MEMORY_KIB = 32768    // 32 MiB (más rápido en móvil)
+    private const val ARGON2_MEMORY_KIB = 32768
     private const val ARGON2_PARALLELISM = 1
 
     private val rng = SecureRandom()
     private val argon2 = Argon2Kt()
 
-    // ─────────── ENCRYPT (siempre v2) ───────────
-
     fun encrypt(
         input: InputStream,
         output: OutputStream,
         password: CharArray,
-        compress: Boolean = true,
+        dataIsCompressed: Boolean,
+        totalSize: Long = -1L,
         onProgress: ((Long, Long) -> Unit)? = null
     ) {
         val salt = ByteArray(SALT_LEN).also(rng::nextBytes)
@@ -69,7 +52,7 @@ object CryptoEngine {
 
         output.write(MAGIC.toByteArray(Charsets.US_ASCII))
         output.write(VERSION_WRITE)
-        output.write(if (compress) 1 else 0)
+        output.write(if (dataIsCompressed) 1 else 0)
         output.write(salt)
         output.write(iv)
 
@@ -80,47 +63,32 @@ object CryptoEngine {
             GCMParameterSpec(TAG_BITS, iv)
         )
 
-        val finalOut: OutputStream = if (compress) {
-            GZIPOutputStream(output, BUFFER)
-        } else output
-
-        // Streaming manual: update + doFinal
         val buf = ByteArray(BUFFER)
         var total = 0L
         while (true) {
             val n = input.read(buf)
             if (n < 0) break
             val chunk = cipher.update(buf, 0, n)
-            if (chunk != null && chunk.isNotEmpty()) {
-                finalOut.write(chunk)
-            }
+            if (chunk != null && chunk.isNotEmpty()) output.write(chunk)
             total += n
-            onProgress?.invoke(total, -1L)
+            onProgress?.invoke(total, totalSize)
         }
         val tag = cipher.doFinal()
-        if (tag != null && tag.isNotEmpty()) {
-            finalOut.write(tag)
-        }
-        finalOut.flush()
-        if (compress) (finalOut as GZIPOutputStream).finish()
+        if (tag != null && tag.isNotEmpty()) output.write(tag)
         output.flush()
-
         key.fill(0)
     }
-
-    // ─────────── DECRYPT (v1 o v2) ───────────
 
     fun decrypt(
         input: InputStream,
         output: OutputStream,
         password: CharArray,
+        totalSize: Long = -1L,
         onProgress: ((Long, Long) -> Unit)? = null
     ) {
         val header = ByteArray(HEADER_LEN)
         readFully(input, header)
-
-        val magic = String(header, 0, 4, Charsets.US_ASCII)
-        require(magic == MAGIC) { "Formato no reconocido" }
+        require(String(header, 0, 4, Charsets.US_ASCII) == MAGIC) { "Formato no reconocido" }
 
         val version = header[4].toInt() and 0xFF
         val compressed = (header[5].toInt() and 0x01) == 1
@@ -140,41 +108,34 @@ object CryptoEngine {
             GCMParameterSpec(TAG_BITS, iv)
         )
 
-        val source: InputStream = if (compressed) {
-            GZIPInputStream(input, BUFFER)
-        } else input
+        val sink: OutputStream = if (compressed) GZIPOutputStream(output, BUFFER) else output
 
-        // Streaming manual: update + doFinal al final
         val buf = ByteArray(BUFFER)
         var total = 0L
         while (true) {
-            val n = source.read(buf)
+            val n = input.read(buf)
             if (n < 0) break
             val chunk = cipher.update(buf, 0, n)
-            if (chunk != null && chunk.isNotEmpty()) {
-                output.write(chunk)
-            }
+            if (chunk != null && chunk.isNotEmpty()) sink.write(chunk)
             total += n
-            onProgress?.invoke(total, -1L)
+            onProgress?.invoke(total, totalSize)
         }
-        val tail = try { cipher.doFinal() } catch (t: Throwable) {
+        val tail = try {
+            cipher.doFinal()
+        } catch (t: Throwable) {
             throw SecurityException("Contraseña incorrecta o archivo corrupto", t)
         }
-        if (tail != null && tail.isNotEmpty()) {
-            output.write(tail)
-        }
+        if (tail != null && tail.isNotEmpty()) sink.write(tail)
+        sink.flush()
+        if (compressed) (sink as GZIPOutputStream).finish()
         output.flush()
-
         key.fill(0)
     }
 
-    // ─────────── DERIVACIÓN ───────────
-
     private fun deriveKeyArgon2(password: CharArray, salt: ByteArray): ByteArray {
-        // Convertir CharArray → UTF-8 bytes sin dejar rastro
-        val pwBytes = CharArrayToUtf8(password)
+        val pwBytes = password.concatToString().toByteArray(Charsets.UTF_8)
         return try {
-            val result = argon2.hash(
+            argon2.hash(
                 mode = Argon2Mode.ARGON2_ID,
                 password = pwBytes,
                 salt = salt,
@@ -182,8 +143,7 @@ object CryptoEngine {
                 mCostInKibibyte = ARGON2_MEMORY_KIB,
                 parallelism = ARGON2_PARALLELISM,
                 hashLengthInBytes = KEY_BITS / 8
-            )
-            result.rawHashAsByteArray()
+            ).rawHashAsByteArray()
         } finally {
             pwBytes.fill(0)
         }
@@ -199,17 +159,11 @@ object CryptoEngine {
         }
     }
 
-    private fun CharArrayToUtf8(chars: CharArray): ByteArray {
-        val sb = StringBuilder(chars.size)
-        chars.forEach { sb.append(it) }
-        return sb.toString().toByteArray(Charsets.UTF_8)
-    }
-
     private fun readFully(input: InputStream, buf: ByteArray) {
         var off = 0
         while (off < buf.size) {
             val n = input.read(buf, off, buf.size - off)
-            if (n < 0) throw EOFException("Archivo truncado o corrupto")
+            if (n < 0) throw EOFException("Archivo truncado")
             off += n
         }
     }

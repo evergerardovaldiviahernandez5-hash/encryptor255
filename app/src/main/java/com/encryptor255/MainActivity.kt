@@ -200,7 +200,7 @@ private val createDoc = registerForActivityResult(
         findViewById<Button>(R.id.btnCancel).setOnClickListener {
             withHaptic {
                 currentJob?.cancel()
-                log("> operación cancelada")
+                log(getString(R.string.log_cancelled))
                 hideProgress()
             }
         }
@@ -338,8 +338,8 @@ private val createDoc = registerForActivityResult(
     private fun encryptText() {
         val pwd = readPassword() ?: return
         val text = textInput.text.toString()
-        if (text.isEmpty()) { log("! sin contenido"); toast("Escribe un texto"); return }
-        log("> cifrando texto (${text.length} chars)…")
+        if (text.isEmpty()) { log(getString(R.string.log_no_content)); toast("Escribe un texto"); return }
+        log(getString(R.string.log_encrypting_text))
         runJob(
             block = {
                 val out = ByteArrayOutputStream()
@@ -362,8 +362,8 @@ private val createDoc = registerForActivityResult(
         val pwd = readPassword() ?: return
         var text = textInput.text.toString().trim()
         if (text.startsWith("E255T:")) text = text.substring(6)
-        if (text.isEmpty()) { log("! sin ciphertext"); toast("Pega el texto cifrado"); return }
-        log("> descifrando texto…")
+        if (text.isEmpty()) { log(getString(R.string.log_no_ciphertext)); toast("Pega el texto cifrado"); return }
+        log(getString(R.string.log_decrypting_text))
         runJob(
             block = {
                 val bytes = Base64.decode(text, Base64.DEFAULT)
@@ -453,7 +453,7 @@ private val createDoc = registerForActivityResult(
         val text = textInput.text.toString()
         if (text.isEmpty()) { toast("Nada que copiar"); return }
         SecurityManager.copyAndSelfDestruct(this, text)
-        log("> copiado · autolimpieza en 30s")
+        log(getString(R.string.log_copied))
         toast("Copiado · se borrará en 30s")
     }
 
@@ -525,12 +525,12 @@ private val createDoc = registerForActivityResult(
         fileMeta.text = "—"
         hashLabel.text = ""
         refreshStrength("")
-        log("> estado limpiado")
+        log(getString(R.string.log_cleared))
     }
 
     private fun readPassword(): CharArray? {
         val p = passwordInput.text.toString()
-        if (p.isEmpty()) { toast("Introduce una contraseña"); log("! contraseña vacía"); return null }
+        if (p.isEmpty()) { toast("Introduce una contraseña"); log(getString(R.string.log_no_password)); return null }
         return p.toCharArray()
     }
 
@@ -566,15 +566,15 @@ private val createDoc = registerForActivityResult(
         progressBar.progress = 0
     }
 
-    private fun updateProgress(bytes: Long, total: Long = -1L) {
+    private fun updateProgress(bytes: Long, total: Long) {
         if (total > 0) {
             val pct = ((bytes * 100) / total).coerceIn(0, 100).toInt()
             progressBar.isIndeterminate = false
             progressBar.progress = pct
-            progressLabel.text = "Procesando… ${bytes / 1024} KB · $pct%"
+            progressLabel.text = getString(R.string.log_progress, (bytes / 1024).toInt(), pct)
         } else {
             progressBar.isIndeterminate = true
-            progressLabel.text = "Procesando… ${bytes / 1024} KB"
+            progressLabel.text = getString(R.string.log_progress_indeterminate, (bytes / 1024).toInt())
         }
     }
 
@@ -629,15 +629,47 @@ private val createDoc = registerForActivityResult(
     private suspend fun encryptBundle(uris: List<Uri>, dst: Uri, pwd: CharArray): String =
         withContext(cryptoDispatcher) {
             if (uris.size == 1) {
-                contentResolver.openInputStream(uris[0])!!.use { ins ->
-                    contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
-                        CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = true) { b, _ ->
-                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(b) }
+                val size = querySize(uris[0])
+                val shouldCompress = size in 1..(5 * 1024 * 1024)
+                if (shouldCompress) {
+                    val tmpComp = java.io.File(cacheDir, "comp_${System.currentTimeMillis()}.tmp")
+                    try {
+                        java.io.FileOutputStream(tmpComp).use { fos ->
+                            java.util.zip.GZIPOutputStream(fos, 256 * 1024).use { gz ->
+                                contentResolver.openInputStream(uris[0])!!.use { ins ->
+                                    ins.copyTo(gz, 256 * 1024)
+                                }
+                            }
+                        }
+                        java.io.FileInputStream(tmpComp).use { fis ->
+                            contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
+                                CryptoEngine.encrypt(
+                                    fis, outs, pwd.copyOf(),
+                                    dataIsCompressed = true,
+                                    totalSize = size
+                                ) { b, t ->
+                                    lifecycleScope.launch(Dispatchers.Main) { updateProgress(b, t) }
+                                }
+                            }
+                        }
+                    } finally { tmpComp.delete() }
+                } else {
+                    contentResolver.openInputStream(uris[0])!!.use { ins ->
+                        contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
+                            CryptoEngine.encrypt(
+                                ins, outs, pwd.copyOf(),
+                                dataIsCompressed = false,
+                                totalSize = size
+                            ) { b, t ->
+                                lifecycleScope.launch(Dispatchers.Main) { updateProgress(b, t) }
+                            }
                         }
                     }
                 }
                 return@withContext "ok"
             }
+
+            // Múltiples archivos → ZIP a temp → cifrar
             val tmp = java.io.File(cacheDir, "enc_${System.currentTimeMillis()}.zip")
             try {
                 java.io.FileOutputStream(tmp).use { fos ->
@@ -646,46 +678,27 @@ private val createDoc = registerForActivityResult(
                             val name = queryName(src) ?: "archivo_$idx"
                             zos.putNextEntry(java.util.zip.ZipEntry(name))
                             contentResolver.openInputStream(src)!!.use { ins ->
-                                ins.copyTo(zos, 64 * 1024)
+                                ins.copyTo(zos, 256 * 1024)
                             }
                             zos.closeEntry()
-                            withContext(Dispatchers.Main) {
-                                log("> empaquetando ${idx + 1}/${uris.size}: $name")
-                            }
                         }
                     }
                 }
+                val totalSize = tmp.length()
                 java.io.FileInputStream(tmp).use { ins ->
                     contentResolver.openOutputStream(dst, "wt")!!.use { outs ->
-                        CryptoEngine.encrypt(ins, outs, pwd.copyOf(), compress = false) { b, _ ->
-                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(b) }
+                        CryptoEngine.encrypt(
+                            ins, outs, pwd.copyOf(),
+                            dataIsCompressed = false,
+                            totalSize = totalSize
+                        ) { b, t ->
+                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(b, t) }
                         }
                     }
                 }
                 "ok"
             } finally { tmp.delete() }
         }
-
-    private fun showQrDialog(bmp: Bitmap) {
-        val pad = (24 * resources.displayMetrics.density).toInt()
-        val size = (260 * resources.displayMetrics.density).toInt()
-
-        val container = android.widget.FrameLayout(this)
-        container.setPadding(pad, pad, pad, pad)
-
-        val iv = ImageView(this)
-        iv.layoutParams = android.widget.FrameLayout.LayoutParams(size, size)
-        iv.scaleType = ImageView.ScaleType.FIT_CENTER
-        iv.setImageBitmap(bmp)
-        container.addView(iv)
-
-        AlertDialog.Builder(this)
-            .setTitle(R.string.qr_dialog_title)
-            .setView(container)
-            .setPositiveButton(R.string.qr_save) { _, _ -> saveQrToFile(bmp) }
-            .setNegativeButton("Cerrar", null)
-            .show()
-    }
 
     private fun saveQrToFile(bmp: Bitmap) {
         pendingCreate = { uri ->
@@ -696,7 +709,7 @@ private val createDoc = registerForActivityResult(
                             bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
                         }
                     }
-                    log("> QR guardado")
+                    log(getString(R.string.log_qr_saved))
                     toast("QR guardado")
                 } catch (t: Throwable) {
                     log("! error: " + t.message)
@@ -716,7 +729,7 @@ private val createDoc = registerForActivityResult(
                         QrUtils.decode(bmp)
                     }
                     if (text.isNullOrEmpty()) {
-                        log("! QR no detectado")
+                        log(getString(R.string.log_qr_not_found))
                         toast(getString(R.string.qr_not_found))
                     } else {
                         textInput.setText(text)
@@ -788,9 +801,10 @@ private val createDoc = registerForActivityResult(
             val tmp = java.io.File(cacheDir, "dec_${System.currentTimeMillis()}.tmp")
             try {
                 java.io.FileOutputStream(tmp).use { fos ->
+                    val total = querySize(uri)
                     contentResolver.openInputStream(uri)!!.use { ins ->
-                        CryptoEngine.decrypt(ins, fos, pwd.copyOf()) { bytes, _ ->
-                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(bytes) }
+                        CryptoEngine.decrypt(ins, fos, pwd.copyOf(), totalSize = total) { bytes, t ->
+                            lifecycleScope.launch(Dispatchers.Main) { updateProgress(bytes, t) }
                         }
                     }
                 }
@@ -899,7 +913,7 @@ private val createDoc = registerForActivityResult(
         try {
             val bmp = QrUtils.generate(text, 800)
             showQrDialog(bmp)
-            log("> QR mostrado")
+            log(getString(R.string.log_qr_generated))
         } catch (t: Throwable) {
             log("! error generando QR: " + t.message)
             toast("Error al generar QR")
