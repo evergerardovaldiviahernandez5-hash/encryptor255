@@ -81,7 +81,7 @@ object CryptoEngine {
         )
 
         val finalOut: OutputStream = if (compress) {
-            GZIPOutputStream(output, BUFFER) { }.also { it.flush() }
+            GZIPOutputStream(output, BUFFER)
         } else output
 
         // Streaming manual: update + doFinal
