@@ -57,4 +57,24 @@
     <string name="log_qr_generated">▸ QR généré</string>
     <string name="log_qr_read">▸ QR lu (%1\$d chars)</string>
     <string name="log_qr_not_found">! QR non détecté</string>
+    <string name="log_encrypted">▸ chiffrement terminé</string>
+    <string name="log_decrypted">▸ déchiffrement terminé</string>
+    <string name="log_no_ciphertext">! pas de ciphertext</string>
+    <string name="log_no_copy">Rien à copier</string>
+    <string name="log_no_share">Rien à partager</string>
+    <string name="log_no_file">Sélectionnez un fichier</string>
+    <string name="log_no_file_cipher">Sélectionnez un .e255</string>
+    <string name="log_generated_pwd">▸ clé générée · 24 car · %1\$d bits</string>
+    <string name="log_qr_saved">▸ QR enregistré</string>
+    <string name="log_file_loaded">▸ fichier chargé : %1\$s</string>
+    <string name="log_files_loaded">▸ %1\$d fichiers chargés</string>
+    <string name="log_share_n">▸ partage de %1\$d fichier(s)</string>
+    <string name="log_copied_hash">Hash copié</string>
+    <string name="log_bundle_n">▸ lot : %1\$d fichiers</string>
+    <string name="log_extracted_n">▸ %1\$d fichiers extraits</string>
+    <string name="log_encrypted_n">▸ %1\$d fichier(s) chiffré(s)</string>
+    <string name="log_decrypted_file">▸ fichier déchiffré → %1\$s</string>
+    <string name="log_note_saved">▸ note enregistrée</string>
+    <string name="log_note_loaded">▸ note chargée</string>
+    <string name="log_note_deleted">▸ note supprimée</string>
 </resources>

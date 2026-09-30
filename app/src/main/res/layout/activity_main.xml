@@ -551,6 +551,21 @@
                 android:contentDescription="@string/cd_share"
                 android:scaleType="centerInside" />
 
+            <Button
+                android:id="@+id/btnNotes"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg_button_ghost"
+                android:text="@string/action_notes"
+                android:textColor="@color/terracotta"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:stateListAnimator="@null"
+                android:fontFamily="sans-serif-medium" />
+
             <ImageButton
                 android:id="@+id/btnClear"
                 android:layout_width="0dp"

@@ -207,6 +207,9 @@ private val createDoc = registerForActivityResult(
         findViewById<Button>(R.id.btnHash).setOnClickListener {
             withHaptic { computeFileHash() }
         }
+        findViewById<Button>(R.id.btnNotes).setOnClickListener {
+            withHaptic { startActivity(android.content.Intent(this, NotesActivity::class.java)) }
+        }
         findViewById<ImageButton>(R.id.btnClear).setOnClickListener { withHaptic { clearAll() } }
         findViewById<ImageButton>(R.id.btnGenerate).setOnClickListener { withHaptic { generatePassword() } }
         btnTogglePwd.setOnClickListener { withHaptic { togglePasswordVisibility() } }

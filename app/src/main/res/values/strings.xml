@@ -118,4 +118,22 @@
     <string name="log_extracted_n">▸ %1\$d archivos extraídos</string>
     <string name="log_encrypted_n">▸ %1\$d archivo(s) cifrado(s)</string>
     <string name="log_decrypted_file">▸ archivo descifrado → %1\$s</string>
+    <string name="notes_title">Notas seguras</string>
+    <string name="notes_new">NUEVA NOTA</string>
+    <string name="notes_empty">Sin notas guardadas</string>
+    <string name="notes_untitled">Sin título</string>
+    <string name="notes_hint_title">Título de la nota…</string>
+    <string name="notes_hint_content">Escribe aquí tus notas confidenciales…</string>
+    <string name="notes_save">GUARDAR</string>
+    <string name="notes_delete">ELIMINAR</string>
+    <string name="notes_saved">Nota guardada</string>
+    <string name="notes_deleted">Nota eliminada</string>
+    <string name="notes_delete_confirm">¿Eliminar esta nota?</string>
+    <string name="notes_error">Error al guardar</string>
+    <string name="notes_need_password">Introduce una contraseña primero</string>
+    <string name="action_notes">NOTAS</string>
+    <string name="cd_notes">Abrir notas seguras</string>
+    <string name="log_note_saved">▸ nota guardada</string>
+    <string name="log_note_loaded">▸ nota cargada</string>
+    <string name="log_note_deleted">▸ nota eliminada</string>
 </resources>

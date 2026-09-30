@@ -27,7 +27,7 @@ object CryptoEngine {
     private const val IV_LEN = 12
     private const val TAG_BITS = 128
     private const val KEY_BITS = 256
-    private const val BUFFER = 256 * 1024
+    private const val BUFFER = 32 * 1024
     private const val HEADER_LEN = 4 + 1 + 1 + SALT_LEN + IV_LEN
 
     private const val PBKDF2_ITERATIONS = 310_000
