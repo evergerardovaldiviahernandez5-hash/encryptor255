@@ -42,4 +42,5 @@
     <string name="settings_language_system">Système</string>
     <string name="settings_language_restart">Redémarrer pour appliquer</string>
     <string name="settings_dialog_language">Choisir la langue</string>
+    <string name="settings_preferences">PRÉFÉRENCES</string>
 </resources>

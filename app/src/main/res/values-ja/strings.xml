@@ -42,4 +42,5 @@
     <string name="settings_language_system">システム</string>
     <string name="settings_language_restart">再起動してください</string>
     <string name="settings_dialog_language">言語を選択</string>
+    <string name="settings_preferences">設定</string>
 </resources>

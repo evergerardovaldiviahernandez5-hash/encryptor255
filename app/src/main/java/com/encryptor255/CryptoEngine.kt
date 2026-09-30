@@ -80,31 +80,47 @@ object CryptoEngine {
             GCMParameterSpec(TAG_BITS, iv)
         )
 
-        val cipherOut = CipherOutputStream(output, cipher)
-        val finalOut: OutputStream =
-            if (compress) GZIPOutputStream(cipherOut, BUFFER) else cipherOut
+        val finalOut: OutputStream = if (compress) {
+            GZIPOutputStream(output, BUFFER) { }.also { it.flush() }
+        } else output
 
-        var total: Long = 0
+        // Streaming manual: update + doFinal
         val buf = ByteArray(BUFFER)
+        var total = 0L
         while (true) {
             val n = input.read(buf)
             if (n < 0) break
-            finalOut.write(buf, 0, n)
+            val chunk = cipher.update(buf, 0, n)
+            if (chunk != null && chunk.isNotEmpty()) {
+                finalOut.write(chunk)
+            }
             total += n
             onProgress?.invoke(total, -1L)
         }
-        finalOut.close()
+        val tag = cipher.doFinal()
+        if (tag != null && tag.isNotEmpty()) {
+            finalOut.write(tag)
+        }
+        finalOut.flush()
+        if (compress) (finalOut as GZIPOutputStream).finish()
+        output.flush()
+
         key.fill(0)
     }
 
     // ─────────── DECRYPT (v1 o v2) ───────────
 
-    fun decrypt(input: InputStream, output: OutputStream, password: CharArray, onProgress: ((Long, Long) -> Unit)? = null) {
+    fun decrypt(
+        input: InputStream,
+        output: OutputStream,
+        password: CharArray,
+        onProgress: ((Long, Long) -> Unit)? = null
+    ) {
         val header = ByteArray(HEADER_LEN)
         readFully(input, header)
 
         val magic = String(header, 0, 4, Charsets.US_ASCII)
-        require(magic == MAGIC) { "Formato no reconocido (no es .e255)" }
+        require(magic == MAGIC) { "Formato no reconocido" }
 
         val version = header[4].toInt() and 0xFF
         val compressed = (header[5].toInt() and 0x01) == 1
@@ -124,20 +140,31 @@ object CryptoEngine {
             GCMParameterSpec(TAG_BITS, iv)
         )
 
-        val cipherIn = CipherInputStream(input, cipher)
-        val finalIn: InputStream =
-            if (compressed) GZIPInputStream(cipherIn, BUFFER) else cipherIn
+        val source: InputStream = if (compressed) {
+            GZIPInputStream(input, BUFFER)
+        } else input
 
-        var total: Long = 0
+        // Streaming manual: update + doFinal al final
         val buf = ByteArray(BUFFER)
+        var total = 0L
         while (true) {
-            val n = finalIn.read(buf)
+            val n = source.read(buf)
             if (n < 0) break
-            output.write(buf, 0, n)
+            val chunk = cipher.update(buf, 0, n)
+            if (chunk != null && chunk.isNotEmpty()) {
+                output.write(chunk)
+            }
             total += n
             onProgress?.invoke(total, -1L)
         }
-        finalIn.close()
+        val tail = try { cipher.doFinal() } catch (t: Throwable) {
+            throw SecurityException("Contraseña incorrecta o archivo corrupto", t)
+        }
+        if (tail != null && tail.isNotEmpty()) {
+            output.write(tail)
+        }
+        output.flush()
+
         key.fill(0)
     }
 

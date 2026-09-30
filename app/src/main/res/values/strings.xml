@@ -86,4 +86,5 @@
     <string name="settings_language_restart">Reinicia la app para aplicar</string>
     <string name="settings_dialog_language">Selecciona idioma</string>
     <string name="progress_percent">%1\$d%%</string>
+    <string name="settings_preferences">PREFERENCIAS</string>
 </resources>

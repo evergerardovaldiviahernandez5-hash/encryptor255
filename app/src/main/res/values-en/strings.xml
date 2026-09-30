@@ -42,4 +42,5 @@
     <string name="settings_language_system">System</string>
     <string name="settings_language_restart">Restart app to apply</string>
     <string name="settings_dialog_language">Select language</string>
+    <string name="settings_preferences">PREFERENCES</string>
 </resources>

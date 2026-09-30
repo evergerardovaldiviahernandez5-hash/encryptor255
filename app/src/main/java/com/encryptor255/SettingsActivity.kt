@@ -13,6 +13,21 @@ import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
 
 class SettingsActivity : AppCompatActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        val prefs = newBase.getSharedPreferences("encryptor255_prefs", android.content.Context.MODE_PRIVATE)
+        val code = prefs.getString("app_language", "system") ?: "system"
+        if (code == "system") {
+            super.attachBaseContext(newBase)
+            return
+        }
+        val locale = java.util.Locale(code)
+        java.util.Locale.setDefault(locale)
+        val config = android.content.res.Configuration(newBase.resources.configuration)
+        if (android.os.Build.VERSION.SDK_INT >= 24) config.setLocale(locale)
+        else @Suppress("DEPRECATION") config.locale = locale
+        super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
+
 
     companion object {
         private const val PREFS = "encryptor255_prefs"

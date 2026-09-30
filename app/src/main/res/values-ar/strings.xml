@@ -42,4 +42,5 @@
     <string name="settings_language_system">النظام</string>
     <string name="settings_language_restart">أعد التشغيل</string>
     <string name="settings_dialog_language">اختر اللغة</string>
+    <string name="settings_preferences">التفضيلات</string>
 </resources>

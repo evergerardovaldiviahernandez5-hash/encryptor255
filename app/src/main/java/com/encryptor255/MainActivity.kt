@@ -48,6 +48,21 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 class MainActivity : AppCompatActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        val prefs = newBase.getSharedPreferences("encryptor255_prefs", android.content.Context.MODE_PRIVATE)
+        val code = prefs.getString("app_language", "system") ?: "system"
+        if (code == "system") {
+            super.attachBaseContext(newBase)
+            return
+        }
+        val locale = java.util.Locale(code)
+        java.util.Locale.setDefault(locale)
+        val config = android.content.res.Configuration(newBase.resources.configuration)
+        if (android.os.Build.VERSION.SDK_INT >= 24) config.setLocale(locale)
+        else @Suppress("DEPRECATION") config.locale = locale
+        super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
+
 
     private enum class Mode { TEXT, FILE }
     private enum class Action { ENCRYPT, DECRYPT }
@@ -70,6 +85,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: android.widget.ProgressBar
     private lateinit var progressLabel: TextView
     private var currentJob: Job? = null
+    private var lastLanguage: String = ""
     private val cryptoDispatcher = Dispatchers.IO.limitedParallelism(2)
 
     private var pwdVisible = false
@@ -580,6 +596,19 @@ private val createDoc = registerForActivityResult(
     private fun querySize(uri: Uri): Long =
         contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)
             ?.use { c -> if (c.moveToFirst()) c.getLong(0) else 0L } ?: 0L
+
+
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences("encryptor255_prefs", MODE_PRIVATE)
+        val current = prefs.getString("app_language", "system") ?: "system"
+        if (lastLanguage.isEmpty()) {
+            lastLanguage = current
+        } else if (lastLanguage != current) {
+            lastLanguage = current
+            recreate()
+        }
+    }
 
     override fun onStop() {
         super.onStop()
